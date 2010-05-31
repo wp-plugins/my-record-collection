@@ -137,7 +137,7 @@ function mrc_destroy() {
 ?>
 
 <div class="wrap mrcAdmin">  
-    <?php    echo "<h2>" . __( 'My Record Collection Options' ) . "</h2>"; ?>  
+    <?php    echo "<h2>" . __( 'My Record Collection Options' , 'my-record-collection') . "</h2>"; ?>  
     <form enctype="multipart/form-data" name="mrc_form" method="post" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>"> 
 <?php  
 $d_next=""; //SET START VALUE
@@ -165,7 +165,7 @@ else{
 			    //echo "The file ".  basename( $_FILES['mrc_xml_file']['name'])." has been uploaded";
 			    update_option('mrc_xml_file', $_FILES['mrc_xml_file']['name']); 
 			} else{
-			    _e( "There was an error uploading the file, please try again!");
+			    _e( "There was an error uploading the file, please try again!", 'my-record-collection');
 			}
         
     	} 
@@ -196,43 +196,43 @@ switch ($disp) {
     	<input type="hidden" name="mrc_hidden" value="0">  
             <?php
         	$filename = get_option('mrc_upload_dir').get_option('mrc_xml_file');
-			echo "<h4>" . __( 'Page 1/4: Upload XML File' ) . "</h4>";
+			echo "<h4>" . __( 'Page 1/4: Upload XML File' , 'my-record-collection') . "</h4>";
 			if (file_exists($filename) && is_file($filename)) :?>
-				<p><?php echo __( 'Uploaded XML file:' ); ?> <?=get_option('mrc_xml_file')?> </p>
-				<p><input type="checkbox" name="del_xml" value="yes" /> <?php _e( 'Delete XML' ); ?></p>
+				<p><?php echo __( 'Uploaded XML file:' , 'my-record-collection'); ?> <?=get_option('mrc_xml_file')?> </p>
+				<p><input type="checkbox" name="del_xml" value="yes" /> <?php _e( 'Delete XML' , 'my-record-collection'); ?></p>
 		    <? else: ?>
 		    	<?php $d_next = ' disabled="disabled"'; ?>
-				<p><?php _e('You can export your collection <a href="http://www.discogs.com/users/export" target="_blank">here</a>. Remember to export it in XML-mode.');?></p>
-		    	<p><?php _e("XML file: " ); ?><input type="file" name="mrc_xml_file" value="<?php echo $mrc_xml_file; ?>" size="20"></p> 
+				<p><?php _e('You can export your collection <a href="http://www.discogs.com/users/export" target="_blank">here</a>. Remember to export it in XML-mode.', 'my-record-collection');?></p>
+		    	<p><?php _e("XML file: " , 'my-record-collection'); ?><input type="file" name="mrc_xml_file" value="<?php echo $mrc_xml_file; ?>" size="20"></p> 
 			<? endif; ?>
 			<p class="submit"> 
-				<input type="submit" name="submit" class="button-primary" value="<?php _e('Update Options' ) ?>" /> 
-				<input type="submit" name="submit_next"<?=$d_next?> value="<?php _e('Next page &raquo;' ) ?>" />
+				<input type="submit" name="submit" class="button-primary" value="<?php _e('Update Options' , 'my-record-collection') ?>" /> 
+				<input type="submit" name="submit_next"<?=$d_next?> value="<?php _e('Next page &raquo;' , 'my-record-collection') ?>" />
 			</p>
        <? break;
      case 1:?>
 	     <input type="hidden" name="mrc_hidden" value="1">  
-	        <?php    echo "<h4>" . __( 'Page 2/4: Import XML into database' ) . "</h4>"; ?>  
-	     <p><?php _e('Uploaded XML-file is');?>: <b><?php echo get_option('mrc_xml_file'); ?></b></p>
+	        <?php    echo "<h4>" . __( 'Page 2/4: Import XML into database' , 'my-record-collection') . "</h4>"; ?>  
+	     <p><?php _e('Uploaded XML-file is', 'my-record-collection');?>: <b><?php echo get_option('mrc_xml_file'); ?></b></p>
 		 <?php
 		 	if(mrc_num_db_rows() != 0){
-		 		printf(__("<p>The database conatains %d rows</p>"), mrc_num_db_rows()); 
-				echo '<p><input type="checkbox" name="mrc_empty_db" value="yes" /> '.__('Empty Database').'.</p>';
+		 		printf(__("<p>The database conatains %d rows</p>", 'my-record-collection'), mrc_num_db_rows()); 
+				echo '<p><input type="checkbox" name="mrc_empty_db" value="yes" /> '.__('Empty Database', 'my-record-collection').'.</p>';
 			}else{
-				echo '<p><input type="checkbox" name="import_xml" value="yes" /> '.__('Import XML into DB').'</p>';
+				echo '<p><input type="checkbox" name="import_xml" value="yes" /> '.__('Import XML into DB', 'my-record-collection').'</p>';
 				$d_next = ' disabled="disabled"';
 			}
 		 ?>
 			<p class="submit"> 
-				<input type="submit" name="submit_prev" value="<?php _e('&laquo; Previous page' ) ?>" /> 
-				<input type="submit" name="submit" class="button-primary" value="<?php _e('Update Options' ) ?>" /> 
-				<input type="submit" name="submit_next"<?=$d_next?> value="<?php _e('Next page &raquo;' ) ?>" />
+				<input type="submit" name="submit_prev" value="<?php _e('&laquo; Previous page' , 'my-record-collection') ?>" /> 
+				<input type="submit" name="submit" class="button-primary" value="<?php _e('Update Options' , 'my-record-collection') ?>" /> 
+				<input type="submit" name="submit_next"<?=$d_next?> value="<?php _e('Next page &raquo;' , 'my-record-collection') ?>" />
 			</p>
      
 <? break;
      case 2:?>
 	 	     <input type="hidden" name="mrc_hidden" value="2">  
-	        <?php    echo "<h4>" . __( 'Page 3/4: Import Images' ) . "</h4>"; ?>  
+	        <?php    echo "<h4>" . __( 'Page 3/4: Import Images' , 'my-record-collection') . "</h4>"; ?>  
 			
 		 <?php
 			$directory = WP_PLUGIN_DIR."/my-record-collection/img/";
@@ -241,32 +241,32 @@ switch ($disp) {
 			$db_img_count = mrc_num_db_imgs();
 			if($filecount == $db_img_count){
 				echo '<p class="mrc_imgimport_sucess">';
-				printf(__("All %d images imported, go to the next step to set up display-mode. Or check delete images to delet them if something went wrong."), $filecount); 
-				echo '</p><p class="mrc_imgimport_sucess"><input type="checkbox" name="mrc_del_imgs" value="yes" /> '.__('Delete images').'</p>';
+				printf(__("All %d images imported, go to the next step to set up display-mode. Or check delete images to delet them if something went wrong.", 'my-record-collection'), $filecount); 
+				echo '</p><p class="mrc_imgimport_sucess"><input type="checkbox" name="mrc_del_imgs" value="yes" /> '.__('Delete images', 'my-record-collection').'</p>';
 				
 			}else{
 				echo '<p id="mrc_imgimport">';
-				printf(__('Importing image <span class="fc">%1d</span> of <span class="tc">%2d</span></p>'), $filecount, $db_img_count);
+				printf(__('Importing image <span class="fc">%1d</span> of <span class="tc">%2d</span></p>', 'my-record-collection'), $filecount, $db_img_count);
 				
-				echo '<input type="button" name="mrc_imp_img" id="mrc_imp_img" value="'.__('Import Images').'" class="button-primary">';
-				echo '<p class="mrc_imgimport_sucess" style="display:none;">'.__('All images imported, go to the next step to set up display-mode. Or check delete images to deleta them if something went wrong.').'</p>';
-				echo '<p class="mrc_imgimport_sucess" style="display:none;"><input type="checkbox" name="mrc_del_imgs" value="yes" /> '.__('Delete images').'.</p>';
+				echo '<input type="button" name="mrc_imp_img" id="mrc_imp_img" value="'.__('Import Images', 'my-record-collection').'" class="button-primary">';
+				echo '<p class="mrc_imgimport_sucess" style="display:none;">'.__('All images imported, go to the next step to set up display-mode. Or check delete images to deleta them if something went wrong.', 'my-record-collection').'</p>';
+				echo '<p class="mrc_imgimport_sucess" style="display:none;"><input type="checkbox" name="mrc_del_imgs" value="yes" /> '.__('Delete images', 'my-record-collection').'.</p>';
 				$d_next = ' disabled="disabled"';
 				echo import_images_lis();
 			}
 			
 		 ?>
 			<p class="submit"> 
-				<input type="submit" name="submit_prev" value="<?php _e('&laquo; Previous page') ?>" /> 
-				<input type="submit" name="submit" class="button-primary" value="<?php _e('Update Options') ?>" /> 
-				<input type="submit" id="mrc_3_next" name="submit_next"<?=$d_next?> value="<?php _e('Next page &raquo;' ) ?>" />
+				<input type="submit" name="submit_prev" value="<?php _e('&laquo; Previous page', 'my-record-collection') ?>" /> 
+				<input type="submit" name="submit" class="button-primary" value="<?php _e('Update Options', 'my-record-collection') ?>" /> 
+				<input type="submit" id="mrc_3_next" name="submit_next"<?=$d_next?> value="<?php _e('Next page &raquo;' , 'my-record-collection') ?>" />
 			</p>
 
 	 
 	 <?php break;
 	      case 3:?>
 	 	     <input type="hidden" name="mrc_hidden" value="2">  
-	        <?php    echo "<h4>" . __( 'Page 4/4: Import Images' ) . "</h4>"; ?>  
+	        <?php    echo "<h4>" . __( 'Page 4/4: Finshed' , 'my-record-collection') . "</h4>"; ?>  
 			
 		 <?php
 			$directory = WP_PLUGIN_DIR."/my-record-collection/img/";
@@ -274,19 +274,19 @@ switch ($disp) {
 			$filecount = countFiles($directory);
 			$db_img_count = mrc_num_db_imgs();
 			if($filecount == $db_img_count){
-				_e( "<p>Congratulations, My Record Collections is now fully installed. Here's how you do to disply it.</p><ol><li>Create a new WordPress Page, name it whatever you like</li><li>Include the following code <b>in HTML mode</b> <span style=\"background-color: #ddd;\">&lt;!--MyRecordCollection--&gt;</span></li><li>You're Done!</li></ol>");
+				_e( "<p>Congratulations, My Record Collections is now fully installed. Here's how you do to disply it.</p><ol><li>Create a new WordPress Page, name it whatever you like</li><li>Include the following code <b>in HTML mode</b> <span style=\"background-color: #ddd;\">&lt;!--MyRecordCollection--&gt;</span></li><li>You're Done!</li></ol>", 'my-record-collection');
 			}else{
 				echo '<p id="mrc_imgimport">';
-				printf(__('Importing image <span class="fc">%1d</span> of <span class="tc">%2d</span></p>'), $filecount, $db_img_count);
-				echo '<input type="button" name="mrc_imp_img" id="mrc_imp_img" value="'.__('Import Images').'" class="button-primary">';
+				printf(__('Importing image <span class="fc">%1d</span> of <span class="tc">%2d</span></p>', 'my-record-collection'), $filecount, $db_img_count);
+				echo '<input type="button" name="mrc_imp_img" id="mrc_imp_img" value="'.__('Import Images', 'my-record-collection').'" class="button-primary">';
 				echo import_images_lis();
 			}
 			
 		 ?>
 			<p class="submit" style="display: none;"> 
-				<input type="submit" name="submit_prev" value="<?php _e('&laquo; Previous page' ) ?>" /> 
-				<input type="submit" name="submit" class="button-primary" value="<?php _e('Update Options' ) ?>" /> 
-				<input type="submit" name="submit_next"<?=$d_next?> value="<?php _e('Next page &raquo;' ) ?>" />
+				<input type="submit" name="submit_prev" value="<?php _e('&laquo; Previous page' , 'my-record-collection') ?>" /> 
+				<input type="submit" name="submit" class="button-primary" value="<?php _e('Update Options' , 'my-record-collection') ?>" /> 
+				<input type="submit" name="submit_next"<?=$d_next?> value="<?php _e('Next page &raquo;' , 'my-record-collection') ?>" />
 			</p>
 
 	 
