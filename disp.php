@@ -30,7 +30,7 @@
 	
 	function getTracklist($tracks){
 
-		$tl = '<table class="tracks"><tr><th colspan="3"> Tracklisting</th></tr>';
+		$tl = '<table class="tracks"><tr><th colspan="3"> '.__( 'Tracklisting') .'</th></tr>';
 		foreach($tracks as $t){
 			$tl .= '<tr><td>'.$t->position.'</td><td>'.$t->title;
 			if($t->extraartists->artist){
@@ -54,20 +54,20 @@
 	
 	function getNotes($notes){
 		if($notes){
-			$n = "<p class=\"credits\"><b>Notes</b>$notes</p>";
+			$n = "<p class=\"credits\"><b>".__( 'Notes') ."</b>$notes</p>";
 		}
 		return $n;
 	}
 	
 	function getCredits($credits){
 		if($credits){
-			$cred = '<p class="credits"><b>Credits</b>';
+			$cred = '<p class="credits"><b>'.__( 'Credits') .'</b>';
 			$lrole=NULL;
 			foreach ($credits as $c){
 				if(!strcmp($lrole, $c->role)){
 					$cred .= ', '.stripName($c->name);
 					if($c->tracks){
-						$cred .= ' (tracks: '.$c->tracks.') ';
+						$cred .= ' ('.__( 'tracks') .': '.$c->tracks.') ';
 					}
 				}else{
 					if(!is_null($lrole)){
@@ -75,7 +75,7 @@
 					}
 					$cred .= $c->role.' - '.stripName($c->name);
 					if($c->tracks){
-						$cred .= ' (tracks: '.$c->tracks.') ';
+						$cred .= ' ('.__( 'tracks') .': '.$c->tracks.') ';
 					}
 				}
 				$lrole = $c->role;
@@ -176,27 +176,27 @@
 <?php if(file_exists($fe)) { echo '<img src="'.$img.'" class="disp_img">'; } ?><h2><?=$artist?> - <?=$title?></h2>
 <table>
 	<tr>
-		<td>Label:</td>
+		<td><?php _e('Label'); ?>:</td>
 		<td><?=$label?></td>
 	</tr>
 	<tr>
-		<td>Catalog#:</td>
+		<td><?php _e('Catalog#'); ?>:</td>
 		<td><?=$catalog?></td>
 	</tr>
 	<tr>
-		<td>Format:</td>
+		<td><?php _e('Format'); ?>:</td>
 		<td><?=$format?></td>
 	</tr>
 	<tr>
-		<td>Country:</td>
+		<td><?php _e('Country'); ?>:</td>
 		<td><?=$country?></td>
 	</tr>
 	<tr>
-		<td>Released:</td>
+		<td><?php _e('Released'); ?>:</td>
 		<td><?=$released?></td>
 	</tr>
 	<tr>
-		<td>Genre:</td>
+		<td><?php _e('Genre'); ?>:</td>
 		<td><?=$genre?></td>
 	</tr>
 </table>

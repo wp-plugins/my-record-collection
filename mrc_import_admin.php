@@ -124,7 +124,7 @@ function mrc_destroy() {
             chmod($dir.$file, 0777);
             if(is_dir($dir.$file)) {
                 chdir('.');
-                destroy($dir.$file.'/');
+                mrc_destroy($dir.$file.'/');
                 rmdir($dir.$file) or DIE("couldn't delete $dir$file<br />");
             }
             else
@@ -137,7 +137,7 @@ function mrc_destroy() {
 ?>
 
 <div class="wrap mrcAdmin">  
-    <?php    echo "<h2>" . __( 'My Record Collection Options', 'mrc_trdom' ) . "</h2>"; ?>  
+    <?php    echo "<h2>" . __( 'My Record Collection Options' ) . "</h2>"; ?>  
     <form enctype="multipart/form-data" name="mrc_form" method="post" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>"> 
 <?php  
 $d_next=""; //SET START VALUE
@@ -165,7 +165,7 @@ else{
 			    //echo "The file ".  basename( $_FILES['mrc_xml_file']['name'])." has been uploaded";
 			    update_option('mrc_xml_file', $_FILES['mrc_xml_file']['name']); 
 			} else{
-			    echo "There was an error uploading the file, please try again!";
+			    _e( "There was an error uploading the file, please try again!");
 			}
         
     	} 
@@ -196,42 +196,43 @@ switch ($disp) {
     	<input type="hidden" name="mrc_hidden" value="0">  
             <?php
         	$filename = get_option('mrc_upload_dir').get_option('mrc_xml_file');
-			echo "<h4>" . __( 'Page 1/4: Upload XML File', 'mrc_trdom' ) . "</h4>";
+			echo "<h4>" . __( 'Page 1/4: Upload XML File' ) . "</h4>";
 			if (file_exists($filename) && is_file($filename)) :?>
-				<p>Uploaded XML file: <?=get_option('mrc_xml_file')?> </p>
-				<p><input type="checkbox" name="del_xml" value="yes" /> Delete XML</p>
+				<p><?php echo __( 'Uploaded XML file:' ); ?> <?=get_option('mrc_xml_file')?> </p>
+				<p><input type="checkbox" name="del_xml" value="yes" /> <?php _e( 'Delete XML' ); ?></p>
 		    <? else: ?>
 		    	<?php $d_next = ' disabled="disabled"'; ?>
+				<p><?php _e('You can export your collection <a href="http://www.discogs.com/users/export" target="_blank">here</a>. Remember to export it in XML-mode.');?></p>
 		    	<p><?php _e("XML file: " ); ?><input type="file" name="mrc_xml_file" value="<?php echo $mrc_xml_file; ?>" size="20"></p> 
 			<? endif; ?>
 			<p class="submit"> 
-				<input type="submit" name="submit" class="button-primary" value="<?php _e('Update Options', 'mrc_trdom' ) ?>" /> 
-				<input type="submit" name="submit_next"<?=$d_next?> value="<?php _e('Next page &raquo;', 'mrc_trdom' ) ?>" />
+				<input type="submit" name="submit" class="button-primary" value="<?php _e('Update Options' ) ?>" /> 
+				<input type="submit" name="submit_next"<?=$d_next?> value="<?php _e('Next page &raquo;' ) ?>" />
 			</p>
        <? break;
      case 1:?>
 	     <input type="hidden" name="mrc_hidden" value="1">  
-	        <?php    echo "<h4>" . __( 'Page 2/4: Import XML into database', 'mrc_trdom' ) . "</h4>"; ?>  
-	     <p>Uploaded XML-file is: <b><?php echo get_option('mrc_xml_file'); ?></b></p>
+	        <?php    echo "<h4>" . __( 'Page 2/4: Import XML into database' ) . "</h4>"; ?>  
+	     <p><?php _e('Uploaded XML-file is');?>: <b><?php echo get_option('mrc_xml_file'); ?></b></p>
 		 <?php
 		 	if(mrc_num_db_rows() != 0){
-		 		echo '<p>The database conatains '.mrc_num_db_rows().' rows</p>'; 
-				echo '<p><input type="checkbox" name="mrc_empty_db" value="yes" /> Empty Database.</p>';
+		 		printf(__("<p>The database conatains %d rows</p>"), mrc_num_db_rows()); 
+				echo '<p><input type="checkbox" name="mrc_empty_db" value="yes" /> '.__('Empty Database').'.</p>';
 			}else{
-				echo '<p><input type="checkbox" name="import_xml" value="yes" /> Import XML into DB.</p>';
+				echo '<p><input type="checkbox" name="import_xml" value="yes" /> '.__('Import XML into DB').'</p>';
 				$d_next = ' disabled="disabled"';
 			}
 		 ?>
 			<p class="submit"> 
-				<input type="submit" name="submit_prev" value="<?php _e('&laquo; Previous page', 'mrc_trdom' ) ?>" /> 
-				<input type="submit" name="submit" class="button-primary" value="<?php _e('Update Options', 'mrc_trdom' ) ?>" /> 
-				<input type="submit" name="submit_next"<?=$d_next?> value="<?php _e('Next page &raquo;', 'mrc_trdom' ) ?>" />
+				<input type="submit" name="submit_prev" value="<?php _e('&laquo; Previous page' ) ?>" /> 
+				<input type="submit" name="submit" class="button-primary" value="<?php _e('Update Options' ) ?>" /> 
+				<input type="submit" name="submit_next"<?=$d_next?> value="<?php _e('Next page &raquo;' ) ?>" />
 			</p>
      
 <? break;
      case 2:?>
 	 	     <input type="hidden" name="mrc_hidden" value="2">  
-	        <?php    echo "<h4>" . __( 'Page 3/4: Import Images', 'mrc_trdom' ) . "</h4>"; ?>  
+	        <?php    echo "<h4>" . __( 'Page 3/4: Import Images' ) . "</h4>"; ?>  
 			
 		 <?php
 			$directory = WP_PLUGIN_DIR."/my-record-collection/img/";
@@ -239,30 +240,33 @@ switch ($disp) {
 			$filecount = countFiles($directory);
 			$db_img_count = mrc_num_db_imgs();
 			if($filecount == $db_img_count){
-				echo '<p class="mrc_imgimport_sucess">All '.$filecount.' images imported, go to the next step to set up display-mode. Or check delete images to deleta them if something went wrong.</p>';
-				echo '<p class="mrc_imgimport_sucess"><input type="checkbox" name="mrc_del_imgs" value="yes" /> Delete images.</p>';
+				echo '<p class="mrc_imgimport_sucess">';
+				printf(__("All %d images imported, go to the next step to set up display-mode. Or check delete images to delet them if something went wrong."), $filecount); 
+				echo '</p><p class="mrc_imgimport_sucess"><input type="checkbox" name="mrc_del_imgs" value="yes" /> '.__('Delete images').'</p>';
 				
 			}else{
-				echo '<p id="mrc_imgimport">Importing image <span class="fc">'.$filecount.'</span> of <span class="tc">'.$db_img_count.'</span></p>';
-				echo '<input type="button" name="mrc_imp_img" id="mrc_imp_img" value="Import Images" class="button-primary">';
-				echo '<p class="mrc_imgimport_sucess" style="display:none;">All images imported, go to the next step to set up display-mode. Or check delete images to deleta them if something went wrong.</p>';
-				echo '<p class="mrc_imgimport_sucess" style="display:none;"><input type="checkbox" name="mrc_del_imgs" value="yes" /> Delete images.</p>';
+				echo '<p id="mrc_imgimport">';
+				printf(__('Importing image <span class="fc">%1d</span> of <span class="tc">%2d</span></p>'), $filecount, $db_img_count);
+				
+				echo '<input type="button" name="mrc_imp_img" id="mrc_imp_img" value="'.__('Import Images').'" class="button-primary">';
+				echo '<p class="mrc_imgimport_sucess" style="display:none;">'.__('All images imported, go to the next step to set up display-mode. Or check delete images to deleta them if something went wrong.').'</p>';
+				echo '<p class="mrc_imgimport_sucess" style="display:none;"><input type="checkbox" name="mrc_del_imgs" value="yes" /> '.__('Delete images').'.</p>';
 				$d_next = ' disabled="disabled"';
 				echo import_images_lis();
 			}
 			
 		 ?>
 			<p class="submit"> 
-				<input type="submit" name="submit_prev" value="<?php _e('&laquo; Previous page', 'mrc_trdom' ) ?>" /> 
-				<input type="submit" name="submit" class="button-primary" value="<?php _e('Update Options', 'mrc_trdom' ) ?>" /> 
-				<input type="submit" id="mrc_3_next" name="submit_next"<?=$d_next?> value="<?php _e('Next page &raquo;', 'mrc_trdom' ) ?>" />
+				<input type="submit" name="submit_prev" value="<?php _e('&laquo; Previous page') ?>" /> 
+				<input type="submit" name="submit" class="button-primary" value="<?php _e('Update Options') ?>" /> 
+				<input type="submit" id="mrc_3_next" name="submit_next"<?=$d_next?> value="<?php _e('Next page &raquo;' ) ?>" />
 			</p>
 
 	 
 	 <?php break;
 	      case 3:?>
 	 	     <input type="hidden" name="mrc_hidden" value="2">  
-	        <?php    echo "<h4>" . __( 'Page 4/4: Import Images', 'mrc_trdom' ) . "</h4>"; ?>  
+	        <?php    echo "<h4>" . __( 'Page 4/4: Import Images' ) . "</h4>"; ?>  
 			
 		 <?php
 			$directory = WP_PLUGIN_DIR."/my-record-collection/img/";
@@ -270,18 +274,19 @@ switch ($disp) {
 			$filecount = countFiles($directory);
 			$db_img_count = mrc_num_db_imgs();
 			if($filecount == $db_img_count){
-				echo "<p>Congratulations, My Record Collections is now fully installed. Here's how you do to disply it.</p><ol><li>Create a new WordPress Page, name it whatever you like</li><li>Include the following code <b>in HTML mode</b> <span style=\"background-color: #ddd;\">&lt;!--MyRecordCollection--&gt;</span></li><li>You're Done!</li></ol>";
+				_e( "<p>Congratulations, My Record Collections is now fully installed. Here's how you do to disply it.</p><ol><li>Create a new WordPress Page, name it whatever you like</li><li>Include the following code <b>in HTML mode</b> <span style=\"background-color: #ddd;\">&lt;!--MyRecordCollection--&gt;</span></li><li>You're Done!</li></ol>");
 			}else{
-				echo '<p id="mrc_imgimport">Importing image <span class="fc">'.$filecount.'</span> of <span class="tc">'.$db_img_count.'</span></p>';
-				echo '<input type="button" name="mrc_imp_img" id="mrc_imp_img" value="Import Images" class="button-primary">';
+				echo '<p id="mrc_imgimport">';
+				printf(__('Importing image <span class="fc">%1d</span> of <span class="tc">%2d</span></p>'), $filecount, $db_img_count);
+				echo '<input type="button" name="mrc_imp_img" id="mrc_imp_img" value="'.__('Import Images').'" class="button-primary">';
 				echo import_images_lis();
 			}
 			
 		 ?>
 			<p class="submit" style="display: none;"> 
-				<input type="submit" name="submit_prev" value="<?php _e('&laquo; Previous page', 'mrc_trdom' ) ?>" /> 
-				<input type="submit" name="submit" class="button-primary" value="<?php _e('Update Options', 'mrc_trdom' ) ?>" /> 
-				<input type="submit" name="submit_next"<?=$d_next?> value="<?php _e('Next page &raquo;', 'mrc_trdom' ) ?>" />
+				<input type="submit" name="submit_prev" value="<?php _e('&laquo; Previous page' ) ?>" /> 
+				<input type="submit" name="submit" class="button-primary" value="<?php _e('Update Options' ) ?>" /> 
+				<input type="submit" name="submit_next"<?=$d_next?> value="<?php _e('Next page &raquo;' ) ?>" />
 			</p>
 
 	 
