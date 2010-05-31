@@ -4,7 +4,7 @@
 	Plugin URI: http://myrecordcollection.arvid.nu/
 	Description: Plugin for displaying your recordcollection on Discogs.com in your blog
 	Author: Arvid Sollenby
-	Version: 0.8
+	Version: 0.9
 	Author URI: http://www.arvid.nu
 	*/
 
