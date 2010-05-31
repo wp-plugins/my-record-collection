@@ -77,7 +77,7 @@ function mrc_display($text) {
 		if($mode == "simple"){
 			$posts = '<div id="MyRecordCollection"><ul class="simple">';
 		}else{
-			$posts = '<div id="MyRecordCollection"><p>'__('Click on the cover to se more information about the record', 'my-record-collection').'.</p><ul class="music">';
+			$posts = '<div id="MyRecordCollection"><p>'.__('Click on the cover to see more information about the record', 'my-record-collection').'.</p><ul class="music">';
 		}
 		
 		foreach ($record_rows as $rec) {
@@ -154,10 +154,16 @@ function mrc_localize_vars() {
     );
 } //End localize_vars
 
+function mrc_init() {
+    $plugin_dir = basename(dirname(__FILE__));
+	load_plugin_textdomain( 'my-record-collection', 'wp-content/plugins/' . $plugin_dir.'/i18n/', $plugin_dir.'/i18n/' );
+}
+
 add_action('admin_menu', 'mrc_admin_actions'); 	
 register_activation_hook(__FILE__,'mrc_db_install');
 add_filter('the_posts', 'conditionally_add_scripts_and_styles'); // the_posts gets triggered before wp_head
 add_filter('the_content', 'mrc_display', 2);
+add_action('init', 'mrc_init');
 
 	
 ?>
