@@ -30,7 +30,7 @@
 	
 	function getTracklist($tracks){
 
-		$tl = '<table class="tracks"><tr><th colspan="3"> '.__( 'Tracklisting') .'</th></tr>';
+		$tl = '<table class="tracks"><tr><th colspan="3"> '.__( 'Tracklisting', 'my-record-collection') .'</th></tr>';
 		foreach($tracks as $t){
 			$tl .= '<tr><td>'.$t->position.'</td><td>'.$t->title;
 			if($t->extraartists->artist){
@@ -54,20 +54,20 @@
 	
 	function getNotes($notes){
 		if($notes){
-			$n = "<p class=\"credits\"><b>".__( 'Notes') ."</b>$notes</p>";
+			$n = "<p class=\"credits\"><b>".__( 'Notes', 'my-record-collection') ."</b>$notes</p>";
 		}
 		return $n;
 	}
 	
 	function getCredits($credits){
 		if($credits){
-			$cred = '<p class="credits"><b>'.__( 'Credits') .'</b>';
+			$cred = '<p class="credits"><b>'.__( 'Credits', 'my-record-collection') .'</b>';
 			$lrole=NULL;
 			foreach ($credits as $c){
 				if(!strcmp($lrole, $c->role)){
 					$cred .= ', '.stripName($c->name);
 					if($c->tracks){
-						$cred .= ' ('.__( 'tracks') .': '.$c->tracks.') ';
+						$cred .= ' ('.__( 'tracks', 'my-record-collection') .': '.$c->tracks.') ';
 					}
 				}else{
 					if(!is_null($lrole)){
@@ -75,7 +75,7 @@
 					}
 					$cred .= $c->role.' - '.stripName($c->name);
 					if($c->tracks){
-						$cred .= ' ('.__( 'tracks') .': '.$c->tracks.') ';
+						$cred .= ' ('.__( 'tracks', 'my-record-collection') .': '.$c->tracks.') ';
 					}
 				}
 				$lrole = $c->role;
@@ -176,27 +176,27 @@
 <?php if(file_exists($fe)) { echo '<img src="'.$img.'" class="disp_img">'; } ?><h2><?=$artist?> - <?=$title?></h2>
 <table>
 	<tr>
-		<td><?php _e('Label'); ?>:</td>
+		<td><?php _e('Label', 'my-record-collection'); ?>:</td>
 		<td><?=$label?></td>
 	</tr>
 	<tr>
-		<td><?php _e('Catalog#'); ?>:</td>
+		<td><?php _e('Catalog#', 'my-record-collection'); ?>:</td>
 		<td><?=$catalog?></td>
 	</tr>
 	<tr>
-		<td><?php _e('Format'); ?>:</td>
+		<td><?php _e('Format', 'my-record-collection'); ?>:</td>
 		<td><?=$format?></td>
 	</tr>
 	<tr>
-		<td><?php _e('Country'); ?>:</td>
+		<td><?php _e('Country', 'my-record-collection'); ?>:</td>
 		<td><?=$country?></td>
 	</tr>
 	<tr>
-		<td><?php _e('Released'); ?>:</td>
+		<td><?php _e('Released', 'my-record-collection'); ?>:</td>
 		<td><?=$released?></td>
 	</tr>
 	<tr>
-		<td><?php _e('Genre'); ?>:</td>
+		<td><?php _e('Genre', 'my-record-collection'); ?>:</td>
 		<td><?=$genre?></td>
 	</tr>
 </table>
