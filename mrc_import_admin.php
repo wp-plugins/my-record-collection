@@ -1,5 +1,10 @@
 <?php
 
+// Define Constants
+$upload_dir = wp_upload_dir();
+define("MRC_URL_BASE_URL", $upload_dir['baseurl']);
+define("MRC_URL_BASE_DIR", $upload_dir['basedir']);
+
 //FUNCTIONS
 function mrc_add2db(){ //ADDS THE XML TO THE DB
 	global $wpdb;
@@ -86,7 +91,7 @@ function mrc_num_db_imgs(){
 function import_images_lis(){
 	global $wpdb;
 	$table_name = $wpdb->prefix . "mrc_records";
-	$dir = WP_PLUGIN_DIR."/my-record-collection/img/";
+	$dir = MRC_URL_BASE_DIR."/my-record-collection/img/";
 	$addimg = $wpdb->get_results("SELECT id,i150 FROM ".$table_name." WHERE NOT i150 = ''");
 	$dSum = '<ul id="mrc_dst">';
 	$sSum = '<ul id="mrc_src">';
@@ -117,7 +122,7 @@ function countFiles($strDirName){
 }
 
 function mrc_destroy() {
-	$dir = WP_PLUGIN_DIR."/my-record-collection/img/";
+	$dir = MRC_URL_BASE_DIR."/my-record-collection/img/";
     $mydir = opendir($dir);
     while(false !== ($file = readdir($mydir))) {
         if($file != "." && $file != "..") {
@@ -160,6 +165,11 @@ else{
 		}else{
 			$target_path = get_option('mrc_upload_dir');	
 			$target_path = $target_path . basename( $_FILES['mrc_xml_file']['name']); 
+			if(!file_exists(get_option('mrc_upload_dir'))){
+				mkdir(get_option('mrc_upload_dir'), 0777, true);
+			}
+			
+			
 			
 			if(move_uploaded_file($_FILES['mrc_xml_file']['tmp_name'], $target_path)) {
 			    //echo "The file ".  basename( $_FILES['mrc_xml_file']['name'])." has been uploaded";
@@ -235,8 +245,8 @@ switch ($disp) {
 	        <?php    echo "<h4>" . __( 'Page 3/4: Import Images' , 'my-record-collection') . "</h4>"; ?>  
 			
 		 <?php
-			$directory = WP_PLUGIN_DIR."/my-record-collection/img/";
-
+			
+			$directory = MRC_URL_BASE_DIR."/my-record-collection/img/";
 			$filecount = countFiles($directory);
 			$db_img_count = mrc_num_db_imgs();
 			if($filecount == $db_img_count){
@@ -269,7 +279,7 @@ switch ($disp) {
 	        <?php    echo "<h4>" . __( 'Page 4/4: Finshed' , 'my-record-collection') . "</h4>"; ?>  
 			
 		 <?php
-			$directory = WP_PLUGIN_DIR."/my-record-collection/img/";
+			$directory = MRC_URL_BASE_DIR."/my-record-collection/img/";
 
 			$filecount = countFiles($directory);
 			$db_img_count = mrc_num_db_imgs();

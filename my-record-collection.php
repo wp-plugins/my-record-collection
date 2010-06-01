@@ -61,7 +61,8 @@ function mrc_db_install () {
       dbDelta($sql);
    }
    chmod(get_option('mrc_upload_dir'), 0776);
-   update_option("mrc_upload_dir", WP_PLUGIN_DIR . "/my-record-collection/xml/");
+   $up_dir = wp_upload_dir();
+   update_option("mrc_upload_dir", $up_dir['basedir'] . "/my-record-collection/xml/");
 }	
 
 // DISPLAY FUNCTION
@@ -104,7 +105,8 @@ function mrc_display($text) {
 			if($rec->i150 == ""){
 				$imgurl = '';
 			}else{
-				$imgurl = '<img src="' . WP_PLUGIN_URL . '/my-record-collection/img/'.$rec->id.'.jpg">';
+				$up_dir = wp_upload_dir();
+				$imgurl = '<img src="' . $up_dir['baseurl'] . '/my-record-collection/img/'.$rec->id.'.jpg">';
 			}
 
 			if($mode == "simple"){

@@ -3,6 +3,11 @@
 	$apikey = "b508dbe1a6"; // DISCOGS API KEY
 	
 	require( '../../../wp-load.php' );
+	// Define Constants
+	$upload_dir = wp_upload_dir();
+	define("MRC_URL_BASE_URL", $upload_dir['baseurl']);
+	define("MRC_URL_BASE_DIR", $upload_dir['basedir']);
+
 	$addr = "http://www.discogs.com/release/".$int. "?f=xml&api_key=".$apikey;
 	$result = wp_remote_retrieve_body( wp_remote_get($addr) );
 
@@ -93,8 +98,9 @@
 		$format .= ", ".$d;
 	}
 	
-	$img = substr($_SERVER["PHP_SELF"],0,-8)."img/".$int.".jpg";
-	$fe = $_SERVER['DOCUMENT_ROOT']  . $img;
+	$fe = MRC_URL_BASE_DIR ."/my-record-collection/img/".$int.".jpg";
+	$img = MRC_URL_BASE_URL ."/my-record-collection/img/".$int.".jpg";
+	//echo file_exists($fe);
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html lang="en">
