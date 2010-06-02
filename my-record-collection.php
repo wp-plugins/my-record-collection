@@ -62,7 +62,7 @@ function mrc_db_install () {
    }
    chmod(get_option('mrc_upload_dir'), 0776);
    $up_dir = wp_upload_dir();
-   update_option("mrc_upload_dir", $up_dir['basedir'] . "/my-record-collection/xml/");
+   update_option("mrc_upload_dir", $up_dir['basedir'] . "/my-record-collection/");
 }	
 
 // DISPLAY FUNCTION

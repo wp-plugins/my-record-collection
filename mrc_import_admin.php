@@ -157,7 +157,7 @@ else{
         $disp = 0;
      }else if($_POST['mrc_hidden'] == '0') { // PAGE 1 show
     	if(isset($_POST['del_xml']) && $_POST['del_xml'] == "yes"){
-			$delfile = get_option('mrc_upload_dir').get_option('mrc_xml_file');
+			$delfile = get_option('mrc_upload_dir')."xml/".get_option('mrc_xml_file');
 			unlink($delfile);
 			delete_option('mrc_xml_file');
 			mrc_db_truncate();
