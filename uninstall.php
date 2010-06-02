@@ -2,22 +2,24 @@
 if( !defined( 'ABSPATH') && !defined('WP_UNINSTALL_PLUGIN') )
     exit();
 	
-	function remove_dir($current_dir) {
-    
-        if($dir = @opendir($current_dir)) {
-            while (($f = readdir($dir)) !== false) {
-                if($f > '0' and filetype($current_dir.$f) == "file") {
-                    unlink($current_dir.$f);
-                } elseif($f > '0' and filetype($current_dir.$f) == "dir") {
-                    remove_dir($current_dir.$f."\\");
-                }
-            }
-            closedir($dir);
-            rmdir($current_dir);
-        }
-    }
+	function rmdir_recursive($dir) {
+		$files = scandir($dir);
+		array_shift($files);    // remove '.' from array
+		array_shift($files);    // remove '..' from array
+	   
+		foreach ($files as $file) {
+			$file = $dir . '/' . $file;
+			if (is_dir($file)) {
+				rmdir_recursive($file);
+				rmdir($file);
+			} else {
+				unlink($file);
+			}
+		}
+		rmdir($dir);
+	}
 
-	remove_dir(get_option('mrc_upload_dir'));
+	rmdir_recursive(get_option('mrc_upload_dir'));
 	//DELETING THE WP OIPTIONS CREATED
 	delete_option('mrc_display_mode');
 	delete_option('mrc_upload_dir');

@@ -9,7 +9,7 @@ define("MRC_URL_BASE_DIR", $upload_dir['basedir']);
 function mrc_add2db(){ //ADDS THE XML TO THE DB
 	global $wpdb;
 	$wpdb->hide_errors();
-	$filename 	= get_option('mrc_upload_dir').get_option('mrc_xml_file');
+	$filename 	= get_option('mrc_upload_dir')."xml/".get_option('mrc_xml_file');
 	$table_name = $wpdb->prefix . "mrc_records";
 	$xmlRAW 	= utf8_encode(file_get_contents($filename));
 	$old 		= array(
@@ -161,12 +161,15 @@ else{
 			unlink($delfile);
 			delete_option('mrc_xml_file');
 			mrc_db_truncate();
-			mrc_destroy();
+			$dir = MRC_URL_BASE_DIR."/my-record-collection/img/";
+			if(file_exists($dir)){
+				mrc_destroy();
+			}
 		}else{
 			$target_path = get_option('mrc_upload_dir');	
-			$target_path = $target_path . basename( $_FILES['mrc_xml_file']['name']); 
-			if(!file_exists(get_option('mrc_upload_dir'))){
-				mkdir(get_option('mrc_upload_dir'), 0777, true);
+			$target_path = $target_path ."xml/". basename( $_FILES['mrc_xml_file']['name']); 
+			if(!file_exists(get_option('mrc_upload_dir')."xml/")){
+				mkdir(get_option('mrc_upload_dir')."xml/", 0777, true);
 			}
 			
 			
@@ -205,7 +208,7 @@ switch ($disp) {
     case 0:?>
     	<input type="hidden" name="mrc_hidden" value="0">  
             <?php
-        	$filename = get_option('mrc_upload_dir').get_option('mrc_xml_file');
+        	$filename = get_option('mrc_upload_dir')."xml/".get_option('mrc_xml_file');
 			echo "<h4>" . __( 'Page 1/4: Upload XML File' , 'my-record-collection') . "</h4>";
 			if (file_exists($filename) && is_file($filename)) :?>
 				<p><?php echo __( 'Uploaded XML file:' , 'my-record-collection'); ?> <?=get_option('mrc_xml_file')?> </p>
@@ -248,7 +251,7 @@ switch ($disp) {
 			
 			$directory = MRC_URL_BASE_DIR."/my-record-collection/img/";
 			if(!file_exists($directory)){
-				mkdir($directory), 0777, true);
+				mkdir($directory, 0777, true);
 			}
 			$filecount = countFiles($directory);
 			$db_img_count = mrc_num_db_imgs();
