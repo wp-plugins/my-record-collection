@@ -247,6 +247,9 @@ switch ($disp) {
 		 <?php
 			
 			$directory = MRC_URL_BASE_DIR."/my-record-collection/img/";
+			if(!file_exists($directory)){
+				mkdir($directory), 0777, true);
+			}
 			$filecount = countFiles($directory);
 			$db_img_count = mrc_num_db_imgs();
 			if($filecount == $db_img_count){
