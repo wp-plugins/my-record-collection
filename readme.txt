@@ -43,8 +43,8 @@ In the `/i18n/` directory you can find `my-record-collection.pot` translate this
 == Changelog ==
 
 = 0.9.1 =
-* Changed upload-directory to `wp-content/uploads`-directory instead of in plugin folder. This will prevent the plugin from delating images and XML-files on update.
-* Added unistall functionality.
+* Changed upload-directory to `wp-content/uploads`-directory instead of in plugin folder. This will prevent the plugin from deleting images and XML-files on update.
+* Added uninstall functionality.
 
 = 0.9 =
 * Some minor bugfixes.
