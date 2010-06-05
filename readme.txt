@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: music, records, collection, discogs.com, record collection
 Requires at least: 2.8
 Tested up to: 3.0
-Stable tag: 0.9.1
+Stable tag: 0.9.2
 
 My Record Collection (MRC) is a plugin for WordPress that lets you display your recordcollection on Discogs.com in your blog.
 
@@ -41,6 +41,9 @@ In the `/i18n/` directory you can find `my-record-collection.pot` translate this
 3. Details about a record.
 
 == Changelog ==
+
+= 0.9.2 =
+* Fixed bug that sometimes occurs when displaying the record info.
 
 = 0.9.1 =
 * Changed upload-directory to `wp-content/uploads`-directory instead of in plugin folder. This will prevent the plugin from deleting images and XML-files on update.

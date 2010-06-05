@@ -8,9 +8,28 @@
 	define("MRC_URL_BASE_URL", $upload_dir['baseurl']);
 	define("MRC_URL_BASE_DIR", $upload_dir['basedir']);
 
+	// API CALL URL
 	$addr = "http://www.discogs.com/release/".$int. "?f=xml&api_key=".$apikey;
-	$result = wp_remote_retrieve_body( wp_remote_get($addr) );
-
+	
+	// CHECK FOR cURL
+	if(function_exists('curl_init')){
+		$curl = curl_init();
+		curl_setopt($curl, CURLOPT_URL, $addr);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($curl, CURLOPT_ENCODING, "gzip");
+		$result = curl_exec($curl);
+		curl_close($curl);
+	}else{ //FALLBACK ON WP_REMOTE_GET
+		$result = wp_remote_retrieve_body( wp_remote_get($addr) );
+		$findme   = 'Client does not accept gzip encoding';
+		$pos = strpos($result, $findme);
+		// CHECK RESULT FOR ERRORS
+		if ($pos !== false) {
+					echo "There seems to be a temporary problem with the Discogs API:<br><b>$findme</b>";
+			exit();
+		}
+	}
+	
 	$xml = new SimpleXMLElement($result);
 	
 	//GET DATA
