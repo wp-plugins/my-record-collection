@@ -72,13 +72,28 @@ function mrc_db_install () {
 function mrc_display($text) {
 	global $wpdb, $table_prefix;
 	
-	//$mode = get_option('mrc_display_mode');
-	$mode = "simple";
+	$settings = get_option('mrc_settings');
+	$mode = $settings['display'];
 	//Only perform plugin functionality if post/page text has <!--MyRecordCollection-->
 	if (preg_match("|<!--MyRecordCollection-->|", $text)) {
 		$wpdb->query("SET NAMES 'utf8'");
-		$record_rows = $wpdb->get_results("SELECT * FROM  `".$wpdb->prefix."mrc_records` ORDER BY artist, r_date");
-		if($mode == "simple"){
+		switch($settings['sort']){
+			case 'alphaartist':
+				$order = "artist ".$settings['sortway'].", r_date";
+				break;
+			case 'alphatitle':
+				$order = "title ".$settings['sortway'].", artist, r_date";
+				break;
+			case 'year':
+				$order = "r_date ".$settings['sortway'].", artist";
+				break;
+			case 'format':
+				$order = "f_name ".$settings['sortway'].", artist, r_date";
+				break;	
+		};
+	
+		$record_rows = $wpdb->get_results("SELECT * FROM  `".$wpdb->prefix."mrc_records` ORDER BY $order");
+		if($mode == "list"){
 			$posts = '<div id="MyRecordCollection"><ul class="simple">';
 		}else{
 			$posts = '<div id="MyRecordCollection"><p>'.__('Click on the cover to see more information about the record', 'my-record-collection').'.</p><ul class="music">';
@@ -109,10 +124,10 @@ function mrc_display($text) {
 				$imgurl = '';
 			}else{
 				$up_dir = wp_upload_dir();
-				$imgurl = '<img src="' . $up_dir['baseurl'] . '/my-record-collection/img/'.$rec->id.'.jpg">';
+				$imgurl = '<img src="' .str_replace("http://api.discogs.com/image/","http://s.dsimg.com/image/",$rec->thumb).'">';
 			}
 
-			if($mode == "simple"){
+			if($mode == "list"){
 				$posts .= "<li record=\"".$rec->id."\">$artist - $title, $f, $rec->label</li>";	
 			}else{
 				$posts .= "<li record=\"".$rec->id."\" class=\"$fc\"><a>$artist - $title</a>$imgurl</li>";	

@@ -147,10 +147,19 @@ switch($fnc){
 	case 'add2db':
 		mrc_add2db();
 		break;
+	case 'savesettings':
+		update_option( 
+			'mrc_settings',
+			array("display" => $_POST['display'],"sort" => $_POST['sort'],"sortway" => $_POST['sortway']),
+			'', 
+			'yes' 
+		);
+		break;
 	default: ?>
 	
 <?php
 $username = get_option('mrc_username');
+$settings = get_option('mrc_settings');
 if(!empty($username)){
 	$url = "http://api.discogs.com/users/".$username;
 	$data = get_file_from_url($url);
@@ -175,21 +184,22 @@ $discogs_num = (isset($discogs_num) ? $discogs_num : 0);
 		<p id="records_in_db" <?php if(!isset($db_num) || $db_num == 0) { echo " class=\"hidden\""; } ?>><strong><?=_e('Records in database' , 'my-record-collection')?></strong>: <span id="db_recordcount"><?=$db_num?></span></p>
 		<p id="update_msg"<?php if($db_num == 0 || abs($db_num - $discogs_num) < 3 ) { echo ' class="hidden"'; } ?>><?php _e( 'Missmatch between rocords in local DB and Discogs DB.<br> If you have added records on discogs, you\'ll need to:<br>' , 'my-record-collection')?><input type="button" id="update_records" class="button-primary" value="<?=_e('Update records in database' , 'my-record-collection')?>" /></p>
 	</div>
-	<div class="mrca_wrapper <?php if($db_num != 0) echo " visible"; ?>"> 
+	<div class="mrca_wrapper <?php if($db_num != 0) echo " visible"; ?>" id="mrc_displaysettings"> 
 		<h4><?=__( '3. Display settings' , 'my-record-collection')?></h4>
 		<p>
 			<strong><?php _e('Select way to display your collection' , 'my-record-collection') ?></strong>: <br>
-			<input type="radio" value="list" name="display"> <?php _e('List mode' , 'my-record-collection') ?><br>
-			<input type="radio" value="covers" name="display"> <?php _e('Recordcovers mode' , 'my-record-collection') ?><br>
-			<input type="radio" value="covers_wo" name="display"> <?php _e('Recordcovers with overlays mode' , 'my-record-collection') ?>
+			<input type="radio" <?php if($settings['display'] == 'list') echo "checked "; ?>value="list" name="display"> <?php _e('List mode' , 'my-record-collection') ?><br>
+			<input type="radio" <?php if($settings['display'] == 'covers') echo "checked "; ?>value="covers" name="display"> <?php _e('Recordcovers mode' , 'my-record-collection') ?><br>
+			<input type="radio" <?php if($settings['display'] == 'covers_wo') echo "checked "; ?>value="covers_wo" name="display"> <?php _e('Recordcovers with overlays mode' , 'my-record-collection') ?>
 		</p> 
 		<p>
 			<strong><?php _e('Select sort order' , 'my-record-collection') ?></strong>: <br>
-			<input type="radio" value="alphaartist" name="sort"> <?php _e('Alphabetical (artist)' , 'my-record-collection') ?><br>
-			<input type="radio" value="alfatitle" name="sort"> <?php _e('Alphabetical (title)' , 'my-record-collection') ?><br>
-			<input type="radio" value="year" name="sort"> <?php _e('Year' , 'my-record-collection') ?><br>
-			<input type="radio" value="format" name="sort"> <?php _e('Format' , 'my-record-collection') ?><br><br>
-			<input type="radio" value="asc" name="sortway"> <?php _e('Ascending' , 'my-record-collection') ?> <input type="radio" value="desc" name="sortway"> <?php _e('Descending' , 'my-record-collection') ?>
+			<input type="radio" <?php if($settings['sort'] == 'alphaartist') echo "checked "; ?>value="alphaartist" name="sort"> <?php _e('Alphabetical (artist)' , 'my-record-collection') ?><br>
+			<input type="radio" <?php if($settings['sort'] == 'alfatitle') echo "checked "; ?>value="alphatitle" name="sort"> <?php _e('Alphabetical (title)' , 'my-record-collection') ?><br>
+			<input type="radio" <?php if($settings['sort'] == 'year') echo "checked "; ?>value="year" name="sort"> <?php _e('Year' , 'my-record-collection') ?><br>
+			<input type="radio" <?php if($settings['sort'] == 'format') echo "checked "; ?>value="format" name="sort"> <?php _e('Format' , 'my-record-collection') ?><br><br>
+			<input type="radio" <?php if($settings['sortway'] == 'asc') echo "checked "; ?>value="asc" name="sortway"> <?php _e('Ascending' , 'my-record-collection') ?> 
+			<input type="radio" <?php if($settings['sortway'] == 'desc') echo "checked "; ?>value="desc" name="sortway"> <?php _e('Descending' , 'my-record-collection') ?>
 		</p>
 		<input type="button" id="save_settings" class="button-primary" value="<?php _e('Save Settings' , 'my-record-collection') ?>" /
 	</div>
