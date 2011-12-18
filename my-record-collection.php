@@ -15,10 +15,12 @@ function mrc_admin() {
 } 
 // ADD SCRIPTS TO ADMIN PAGE
 function mrc_js(){
-	wp_enqueue_script('jquery');
+	wp_deregister_script( 'jquery' );
+	wp_register_script( 'jquery', 'http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js');
+	wp_enqueue_script( 'jquery' );
 	wp_enqueue_script('mrcScript', WP_PLUGIN_URL . '/my-record-collection/js/mrc_scripts.js');
 	wp_localize_script( 'mrcScript', 'mrc_loc', mrc_localize_vars());
-	wp_enqueue_script('colorbox-JS', WP_PLUGIN_URL . '/my-record-collection/js/jquery.colorbox-min.js');
+	//wp_enqueue_script('colorbox-JS', WP_PLUGIN_URL . '/my-record-collection/js/jquery.colorbox-min.js');
 }
 
 // ADD STYLES TO ADMIN PAGE
@@ -29,7 +31,9 @@ function mrc_css(){
 
 // DO ADMIN ACTIONS
 function mrc_admin_actions(){
-	$page = add_options_page("My Record Collection", "My Record Collection", 1, "my-record-collection.php", "mrc_admin");
+	//$page = add_options_page("My Record Collection", "My Record Collection", 1, "my-record-collection.php", "mrc_admin");
+	
+	$page = add_menu_page( "My Record Collection Settings", "My Record Collection", "manage_options", "my-record-collection", "mrc_admin" );
 	add_action('admin_print_scripts-' . $page, 'mrc_js', 9);	
 	add_action('admin_print_styles-' . $page, 'mrc_css', 9);
 }
@@ -42,20 +46,19 @@ function mrc_db_install () {
    if($wpdb->get_var("show tables like '$table_name'") != $table_name) {
       
 	// CREATE THE TABLE
-	$sql = "CREATE TABLE IF NOT EXISTS " . $table_name . " (
+	$sql = "CREATE TABLE IF NOT EXISTS `" . $table_name . "` (
 			  `id` mediumint(8) NOT NULL,
-			  `artist` varchar(50) NOT NULL,
-			  `title` varchar(150) NOT NULL,
-			  `label` varchar(100) NOT NULL,
-			  `catno` varchar(30) NOT NULL,
-			  `f_name` varchar(20) NOT NULL,
+			  `artist` varchar(50) CHARACTER SET utf8 NOT NULL,
+			  `title` varchar(150) CHARACTER SET utf8 NOT NULL,
+			  `label` varchar(100) CHARACTER SET utf8 NOT NULL,
+			  `catno` varchar(30) CHARACTER SET utf8 NOT NULL,
+			  `f_name` varchar(20) CHARACTER SET utf8 NOT NULL,
 			  `f_qty` int(2) NOT NULL,
-			  `f_desc` varchar(100) NOT NULL,
-			  `r_date` varchar(20) NOT NULL,
-			  `country` varchar(20) NOT NULL,
-			  `i150` varchar(100) default NULL,
-			  PRIMARY KEY  (`id`)
-			) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
+			  `f_desc` varchar(100) CHARACTER SET utf8 NOT NULL,
+			  `r_date` varchar(20) CHARACTER SET utf8 NOT NULL,
+			  `thumb` varchar(100) CHARACTER SET utf8 DEFAULT NULL,
+			  PRIMARY KEY (`id`)
+			) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;";
 
       require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
       dbDelta($sql);
@@ -69,8 +72,8 @@ function mrc_db_install () {
 function mrc_display($text) {
 	global $wpdb, $table_prefix;
 	
-	$mode = get_option('mrc_display_mode');
-	//$mode = "simple";
+	//$mode = get_option('mrc_display_mode');
+	$mode = "simple";
 	//Only perform plugin functionality if post/page text has <!--MyRecordCollection-->
 	if (preg_match("|<!--MyRecordCollection-->|", $text)) {
 		$wpdb->query("SET NAMES 'utf8'");
@@ -102,7 +105,7 @@ function mrc_display($text) {
 				$f = "&Ouml;vrigt";
 			}
 			
-			if($rec->i150 == ""){
+			if($rec->thumb == ""){
 				$imgurl = '';
 			}else{
 				$up_dir = wp_upload_dir();
@@ -157,7 +160,7 @@ function mrc_localize_vars() {
 } //End localize_vars
 
 function mrc_init() {
-    $plugin_dir = basename(dirname(__FILE__));
+	$plugin_dir = basename(dirname(__FILE__));
 	load_plugin_textdomain( 'my-record-collection', 'wp-content/plugins/' . $plugin_dir.'/i18n/', $plugin_dir.'/i18n/' );
 }
 

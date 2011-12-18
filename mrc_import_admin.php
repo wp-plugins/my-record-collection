@@ -1,73 +1,57 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors','On');
 
-// Define Constants
-$upload_dir = wp_upload_dir();
-define("MRC_URL_BASE_URL", $upload_dir['baseurl']);
-define("MRC_URL_BASE_DIR", $upload_dir['basedir']);
+
+//include wp-config or wp-load.php
+
+$root = dirname(dirname(dirname(dirname(__FILE__))));
+if (file_exists($root.'/wp-load.php')) {
+	// WP 2.6
+	require_once($root.'/wp-load.php');
+} else {
+	// Before 2.6
+	require_once($root.'/wp-config.php');
+}
+
 
 //FUNCTIONS
 function mrc_add2db(){ //ADDS THE XML TO THE DB
 	global $wpdb;
 	$wpdb->hide_errors();
-	$filename 	= get_option('mrc_upload_dir')."xml/".get_option('mrc_xml_file');
+
+	
 	$table_name = $wpdb->prefix . "mrc_records";
-	$xmlRAW 	= utf8_encode(file_get_contents($filename));
-	$old 		= array(
-					"<Collection Sleeve Condition />",
-					"Collection Folder",
-					"<Collection Notes />",
-					"<Collection Media Condition />",
-					"Collection Sleeve Condition",
-					"Collection Notes",
-					"Collection Media Condition",
-					"<Collection Media Condition />");
-	$new 		= array(
-					"<CollectionSleeveCondition/>",
-					"CollectionFolder",
-					"<CollectionNotes/>",
-					"<CollectionMediaCondition/>",
-					"CollectionSleeveCondition",
-					"CollectionNotes",
-					"CollectionMediaCondition",
-					"<CollectionMediaCondition/>"
-				);
-	$xml = str_replace($old,$new,$xmlRAW);
-	$MYxml = new SimpleXMLElement($xml);
+	mrc_db_truncate();
+	$url = "http://api.discogs.com/users/volmar/collection/folders/0/releases?per_page=100&page=1";
+	$json = json_decode(get_file_from_url($url));
+	$page = $json->pagination->page;
+	$pages = $json->pagination->pages;
+	$count = 0;
 	
-	foreach($MYxml->release as $rec){
-		$elon = count($rec->images->image);
-	
-		$dW="";
-		for($i=0; $i < $elon; $i++){
-			if($rec->images->image[$i]->attributes()->type == "primary"){
-				$dW = $rec->images->image[$i]->attributes()->uri150;
-			}else{
-				$dW .= "";
-			}
-			
+	for($i=1; $i < $pages+1; $i++ ){
+		if($i != 1){
+			$url = "http://api.discogs.com/users/volmar/collection/folders/0/releases?per_page=100&page=".$i;
+			$json = json_decode(get_file_from_url($url));
 		}
-		if($elon == 0){
-			$dW == NULL;
-		}else{
-			if($dW == ""){
-				$dW = $rec->images->image[0]->attributes()->uri150;
-			}
-		}
+		foreach($json->releases as $r){
 			$data = array(
-					   'id' 	=> $rec->attributes()->id, 
-					   'artist' => utf8_decode($rec->artists->artist->name), 
-					   'title'	=> utf8_decode(html_entity_decode($rec->title)), 
-					   'label' 	=> utf8_decode(html_entity_decode($rec->labels->label->attributes()->name)), 
-					   'catno' 	=> utf8_decode($rec->labels->label->attributes()->catno), 
-					   'f_name' => utf8_decode($rec->formats->format->attributes()->name), 
-					   'f_qty' 	=> $rec->formats->format->attributes()->qty, 
-					   'f_desc' => utf8_decode($rec->formats->format->descriptions->description), 
-					   'r_date' => $rec->released,
-					   'country'=> utf8_decode($rec->country),
-					   'i150'	=> $dW
-					 );
-		$wpdb->insert( $table_name, $data );
+			   'id' 		=> $r->id, 
+			   'artist' => html_entity_decode($r->basic_information->artists[0]->name), 
+			   'title'	=> html_entity_decode($r->basic_information->title), 
+			   'label' 	=> html_entity_decode($r->basic_information->labels[0]->name), 
+			   'catno' 	=> $r->basic_information->labels[0]->catno, 
+			   'f_name' => $r->basic_information->formats[0]->name, 
+			   'f_qty' 	=> $r->basic_information->formats[0]->qty, 
+			   'f_desc' => (isset($r->basic_information->formats[0]->descriptions[0]) ? $r->basic_information->formats[0]->descriptions[0] : null), 
+			   'r_date' => $r->basic_information->year,
+			   'thumb'	=> $r->basic_information->thumb
+			 );
+			$wpdb->insert( $table_name, $data );
+			$count++;
+		}
 	}
+	echo $count;
 }
 
 function mrc_db_truncate(){
@@ -139,84 +123,105 @@ function mrc_destroy() {
     closedir($mydir);
 }
 
+function get_file_from_url($src){
+	return file_get_contents($src);
+}
+
+
+$fnc = (isset($_POST['fnc']) ? trim($_POST['fnc']) : null);
+
+$uinfo = get_option('mrc_userinfo');
+$settings = get_option('mrc_settings');
+
+switch($fnc){
+	case 'getuser':
+		$url = "http://api.discogs.com/users/".$_POST['username'];
+		$data = get_file_from_url($url);	
+		$js = json_decode($data,true);
+		update_option( 'mrc_username',$_POST['username'],'', 'yes' );	
+		echo $data;
+		break;
+	case 'resetuser':
+		delete_option( 'mrc_username' );	
+		break;
+	case 'add2db':
+		mrc_add2db();
+		break;
+	default: ?>
+	
+<?php
+$username = get_option('mrc_username');
+if(!empty($username)){
+	$url = "http://api.discogs.com/users/".$username;
+	$data = get_file_from_url($url);
+	$js = json_decode($data);
+	$discogs_num = $js->num_collection;
+}
+$db_num = mrc_num_db_rows();
+$discogs_num = (isset($discogs_num) ? $discogs_num : 0);
+?>
+		
+<div class="wrap mrcAdmin"> 
+	<h2><?php _e( 'My Record Collection Options' , 'my-record-collection')?></h2>
+	<div class="mrca_wrapper visible"> 
+		<h4><?php _e( '1. Enter Username' , 'my-record-collection')?></h4>
+		<p><?php _e( 'Username:' , 'my-record-collection')?> <input type="text" id="discogs_username" value="<?=$username?>"> <input type="button" id="submit_username" class="button-primary" value="<?php _e('Import userdata' , 'my-record-collection') ?>" /> </p>
+		<input type="button" id="reset_username" class="button-secondary<?php if(empty($username)) echo ' hidden'; ?>" value="<?php _e('Reset userinfo' , 'my-record-collection') ?>" />
+	</div>
+	<div class="mrca_wrapper <?php if(!empty($username)) echo " visible"; ?>"> 
+		<h4><?=__( '2. Recordinfo' , 'my-record-collection')?></h4>
+		<p><strong><?php _e('Records in collection' , 'my-record-collection') ?></strong>: <span id="discogs_recordcount"><?=$discogs_num?></span></p> 
+		<input type="button" id="import_records" class="button-primary <?php if(isset($db_num) && $db_num != 0) { echo " hidden"; } ?>" value="<?=_e('Import records to database' , 'my-record-collection')?>" />
+		<p id="records_in_db" <?php if(!isset($db_num) || $db_num == 0) { echo " class=\"hidden\""; } ?>><strong><?=_e('Records in database' , 'my-record-collection')?></strong>: <span id="db_recordcount"><?=$db_num?></span></p>
+		<p id="update_msg"<?php if($db_num == 0 || abs($db_num - $discogs_num) < 3 ) { echo ' class="hidden"'; } ?>><?php _e( 'Missmatch between rocords in local DB and Discogs DB.<br> If you have added records on discogs, you\'ll need to:<br>' , 'my-record-collection')?><input type="button" id="update_records" class="button-primary" value="<?=_e('Update records in database' , 'my-record-collection')?>" /></p>
+	</div>
+	<div class="mrca_wrapper <?php if($db_num != 0) echo " visible"; ?>"> 
+		<h4><?=__( '3. Display settings' , 'my-record-collection')?></h4>
+		<p>
+			<strong><?php _e('Select way to display your collection' , 'my-record-collection') ?></strong>: <br>
+			<input type="radio" value="list" name="display"> <?php _e('List mode' , 'my-record-collection') ?><br>
+			<input type="radio" value="covers" name="display"> <?php _e('Recordcovers mode' , 'my-record-collection') ?><br>
+			<input type="radio" value="covers_wo" name="display"> <?php _e('Recordcovers with overlays mode' , 'my-record-collection') ?>
+		</p> 
+		<p>
+			<strong><?php _e('Select sort order' , 'my-record-collection') ?></strong>: <br>
+			<input type="radio" value="alphaartist" name="sort"> <?php _e('Alphabetical (artist)' , 'my-record-collection') ?><br>
+			<input type="radio" value="alfatitle" name="sort"> <?php _e('Alphabetical (title)' , 'my-record-collection') ?><br>
+			<input type="radio" value="year" name="sort"> <?php _e('Year' , 'my-record-collection') ?><br>
+			<input type="radio" value="format" name="sort"> <?php _e('Format' , 'my-record-collection') ?><br><br>
+			<input type="radio" value="asc" name="sortway"> <?php _e('Ascending' , 'my-record-collection') ?> <input type="radio" value="desc" name="sortway"> <?php _e('Descending' , 'my-record-collection') ?>
+		</p>
+		<input type="button" id="save_settings" class="button-primary" value="<?php _e('Save Settings' , 'my-record-collection') ?>" /
+	</div>
+</div>
+<?php 
+}
 ?>
 
-<div class="wrap mrcAdmin">  
-    <?php    echo "<h2>" . __( 'My Record Collection Options' , 'my-record-collection') . "</h2>"; ?>  
-    <form enctype="multipart/form-data" name="mrc_form" method="post" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>"> 
-<?php  
-$d_next=""; //SET START VALUE
+<?/* 
 
-/** CHECK WHAT PAGE TO DISPLAY **/
-if		(isset($_POST['submit_next'])){ $disp = $_POST['mrc_hidden']+1;	}
-else if	(isset($_POST['submit_prev'])){ $disp = $_POST['mrc_hidden']-1;	}
 
-else{
-	if(isset($_POST['submit'])){ $disp = $_POST['mrc_hidden'];	} //Show witch page to display
-	if(!isset($_POST['mrc_hidden'])){
-        $disp = 0;
-     }else if($_POST['mrc_hidden'] == '0') { // PAGE 1 show
-    	if(isset($_POST['del_xml']) && $_POST['del_xml'] == "yes"){
-			$delfile = get_option('mrc_upload_dir')."xml/".get_option('mrc_xml_file');
-			unlink($delfile);
-			delete_option('mrc_xml_file');
-			mrc_db_truncate();
-			$dir = MRC_URL_BASE_DIR."/my-record-collection/img/";
-			if(file_exists($dir)){
-				mrc_destroy();
-			}
-		}else{
-			$target_path = get_option('mrc_upload_dir');	
-			$target_path = $target_path ."xml/". basename( $_FILES['mrc_xml_file']['name']); 
-			if(!file_exists(get_option('mrc_upload_dir')."xml/")){
-				mkdir(get_option('mrc_upload_dir')."xml/", 0777, true);
-			}
-			
-			
-			
-			if(move_uploaded_file($_FILES['mrc_xml_file']['tmp_name'], $target_path)) {
-			    //echo "The file ".  basename( $_FILES['mrc_xml_file']['name'])." has been uploaded";
-			    update_option('mrc_xml_file', $_FILES['mrc_xml_file']['name']); 
-			} else{
-			    _e( "There was an error uploading the file, please try again!", 'my-record-collection');
-			}
-        
-    	} 
+switch ($disp) {
+    case 0:?>
+		<input type="hidden" name="mrc_hidden" value="0">  
+    <?php
+			echo "<h4>" . __( 'Page 1/4: Enter Username' , 'my-record-collection') . "</h4>";?>
+				<p><?php echo __( 'Uploaded XML file:' , 'my-record-collection'); ?> <?=get_option('mrc_xml_file')?> </p>
 
-	}else if($_POST['mrc_hidden'] == '1') { // PAGE 2 show
-		if(isset($_POST['mrc_empty_db']) && $_POST['mrc_empty_db'] == "yes"){
-			mrc_db_truncate();
-			mrc_destroy();
-		}else if(isset($_POST['import_xml']) && $_POST['import_xml'] == "yes"){
-			mrc_add2db();
-		}
 
-	}else if($_POST['mrc_hidden'] == '2') { // PAGE 2 show
-		if(isset($_POST['import_img']) && $_POST['import_img'] == "yes"){
-			//$limit = $_POST['imported_imgs'];
-			//import_images($limit);
-		}else if(isset($_POST['mrc_del_imgs']) && $_POST['mrc_del_imgs'] == "yes"){
-			mrc_destroy();
-		}
-
-	}
-}
-?> 
 
 <?php
+/*
 switch ($disp) {
     case 0:?>
     	<input type="hidden" name="mrc_hidden" value="0">  
-            <?php
-        	$filename = get_option('mrc_upload_dir')."xml/".get_option('mrc_xml_file');
-			echo "<h4>" . __( 'Page 1/4: Upload XML File' , 'my-record-collection') . "</h4>";
-			if (file_exists($filename) && is_file($filename)) :?>
+      <?php
+			echo "<h4>" . __( 'Page 1/4: Enter Username' , 'my-record-collection') . "</h4>";
 				<p><?php echo __( 'Uploaded XML file:' , 'my-record-collection'); ?> <?=get_option('mrc_xml_file')?> </p>
-				<p><input type="checkbox" name="del_xml" value="yes" /> <?php _e( 'Delete XML' , 'my-record-collection'); ?></p>
+
 		    <? else: ?>
 		    	<?php $d_next = ' disabled="disabled"'; ?>
-				<p><?php _e('You can export your collection <a href="http://www.discogs.com/users/export" target="_blank">here</a>. Remember to export it in XML-mode.', 'my-record-collection');?></p>
-		    	<p><?php _e("XML file: " , 'my-record-collection'); ?><input type="file" name="mrc_xml_file" value="<?php echo $mrc_xml_file; ?>" size="20"></p> 
+		    	<p><?php _e("Username: " , 'my-record-collection'); ?><input type="text" name="mrc_discogs_username" value="<?php echo $mrc_discogs_username; ?>"></p> 
 			<? endif; ?>
 			<p class="submit"> 
 				<input type="submit" name="submit" class="button-primary" value="<?php _e('Update Options' , 'my-record-collection') ?>" /> 
@@ -308,7 +313,5 @@ switch ($disp) {
 	 
 	 <?php break;
 	 }
-
+*/
 ?> 
-    </form>  
-</div> 

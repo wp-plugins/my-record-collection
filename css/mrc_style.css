@@ -1,15 +1,35 @@
 /** ADMIN STYLES **/
-.mrcAdmin input[disabled=disabled] {
-  color:silver;
+
+.mrca_wrapper {
+	display: none;
+	border: 1px solid silver;
+	background: #eee;
+	padding: 5px 10px;
+	-webkit-border-radius: 7px;
+	 	-moz-border-radius: 7px;
+			  border-radius: 7px;
+	margin-top: 5px;
 }
 
-#mrc_dst, #mrc_src{
-	display:none;
+.mrca_wrapper.visible {
+	display:block;
 }
 
-.mrcAdmin input[disabled=disabled]{
-	color: silver;
+.hidden {
+	display: none;
 }
+
+
+#loader_overlay {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
+	background: rgba(255,255,255,0.7) url(../gfx/loader.gif) 50% 50% no-repeat;
+	z-index: 300;
+}
+
 
 
 /** FRONT STYLES **/
