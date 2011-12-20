@@ -6,6 +6,8 @@ function hideLoader(){
 }
 
 jQuery(document).ready(function($) {
+	
+	$('ul.music').MRCinfo();
 
 	var music = $('#MyRecordCollection').find('ul.music').children();
 
@@ -61,7 +63,7 @@ jQuery(document).ready(function($) {
 				mode = SettingsContainer.find('input[name=display]:checked').val(),
 				sort = SettingsContainer.find('input[name=sort]:checked').val(),
 				way  = SettingsContainer.find('input[name=sortway]:checked').val(),
-				num  = SettingsContainer.find('#removenum').prop('checked')
+				num  = SettingsContainer.find('#removenum').prop('checked'),
 				the  = SettingsContainer.find('#removethe').prop('checked');
 			if(mode && sort && way){
 				var values = {
@@ -82,14 +84,75 @@ jQuery(document).ready(function($) {
 
 	music.hover(
 		function(){
-			//console.log('in');
+			$('ul.music').MRCinfo('showInfo',$(this));
 		},
 		function(){
-			//console.log('ut');
+			$('ul.music').MRCinfo('hideInfo',$(this));
 		}
 	);
 	
 });
+
+var MRCsettings = {
+	onEachRow: null,
+	tt: $('#MRC_info_tooltip')
+};
+
+(function( $ ){
+	var methods = {
+		init : function( options ) {
+
+			return this.each(function(){
+
+				var $this = $(this),
+				data = $this.data('tooltip');
+	
+				MRCsettings.onEachRow = Math.floor($this.parent().width() / 110 );
+
+				$(document.body).append('<div id="MRC_info_tooltip"></div>');
+			});
+		},
+		leftOrRight : function ( index, width, p ) {
+			var mod = index % MRCsettings.onEachRow,
+				 lor = (mod == MRCsettings.onEachRow-1 ? 'left' : 'right'),
+				pos;
+			if(lor == 'right'){
+				pos = { left : (p.left -10), top: p.top - 12 };
+			}else{
+				pos = { right : (p.left + width + 10), top: p.top - 12 };
+			}
+			return pos;
+		},
+		getContent : function( elem ) { 
+			var artist = elem.find('.mrc_artist').text(),
+				 title = elem.find('.mrc_title').text();
+			return artist+'<br>'+title;
+		},
+		showInfo : function( elem ) {
+			var lor = methods.leftOrRight(elem.index(),elem.width(),elem.offset());
+			$('#MRC_info_tooltip').hide().html(methods.getContent(elem)).css(lor).show();		
+			
+		},
+		hideInfo : function( ) { 
+			$('#MRC_info_tooltip').hide();	
+		},
+		update : function( content ) { // ...
+		}
+	};
+
+$.fn.MRCinfo = function( method ) {
+
+	if ( methods[method] ) {
+		return methods[method].apply( this, Array.prototype.slice.call( arguments, 1 ));
+	} else if ( typeof method === 'object' || ! method ) {
+		return methods.init.apply( this, arguments );
+	} else {
+		$.error( 'Method ' +  method + ' does not exist on jQuery.tooltip' );
+	}    
+
+};
+
+})( jQuery );
 
 
 

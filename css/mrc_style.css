@@ -23,7 +23,7 @@ ul.music li img{ position:absolute; width:80px; height:80px; border:0; }
 
 /* Jewel Case */
 ul.music li.jewel img{ width:72px; height:72px; top:3px; left:12px; } 
-ul.music li.jewel a{ background:url(../gfx/jewel.png) 0 0 no-repeat; width:90px; height:82px; } 
+ul.music li.jewel a{ background:url(../gfx/jewel.png) 0 0 no-repeat; width:96px; height:82px; } 
 ul.music li.jewel{ background:url(../gfx/blank_insert.gif) 12px 3px no-repeat; }
 
 /* Vinyl Sleeve */
@@ -54,6 +54,9 @@ ul.simplemusic a span.mrc_label { display: inline;  color: #bbb; }
 /** list **/
 ul.simple { list-style-type: none !important; }
 ul.simple li:nth-child(odd) { background-color: #eee; }
+
+/** MRC_info_tooltip **/
+#MRC_info_tooltip { display: none; width: 230px; height: 103px; background: rgba(255,0,0,.5); position: absolute; top: 0px; left: 0px; -webkit-border-radius: 12px; }
 
 
 .mrc_d_foot{clear: both; }
