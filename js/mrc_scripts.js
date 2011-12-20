@@ -7,6 +7,8 @@ function hideLoader(){
 
 jQuery(document).ready(function($) {
 
+	var music = $('#MyRecordCollection').find('ul.music').children();
+
 	$('#submit_username').bind('click',
 		function(){
 			showLoader();
@@ -58,12 +60,32 @@ jQuery(document).ready(function($) {
 			var SettingsContainer = $('#mrc_displaysettings'),
 				mode = SettingsContainer.find('input[name=display]:checked').val(),
 				sort = SettingsContainer.find('input[name=sort]:checked').val(),
-				way  = SettingsContainer.find('input[name=sortway]:checked').val();
+				way  = SettingsContainer.find('input[name=sortway]:checked').val(),
+				num  = SettingsContainer.find('#removenum').prop('checked')
+				the  = SettingsContainer.find('#removethe').prop('checked');
 			if(mode && sort && way){
-				$.post('/wp-content/plugins/my-record-collection/mrc_import_admin.php',{fnc:'savesettings',display:mode,sort:sort,sortway:way},function(){
-					alert('käse');
+				var values = {
+					fnc 	: 'savesettings',
+					display : mode,
+					sort 	: sort,
+					sortway : way,
+					r_num	: num,
+					r_the	: the
+				};
+				$.post('/wp-content/plugins/my-record-collection/mrc_import_admin.php',
+					values,function(){
+						alert('sparat');
 				});
 			}
+		}
+	);
+
+	music.hover(
+		function(){
+			//console.log('in');
+		},
+		function(){
+			//console.log('ut');
 		}
 	);
 	

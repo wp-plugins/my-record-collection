@@ -1,183 +1,59 @@
-/** ADMIN STYLES **/
+/*** ADMIN STYLES ***/
 
-.mrca_wrapper {
-	display: none;
-	border: 1px solid silver;
-	background: #eee;
-	padding: 5px 10px;
-	-webkit-border-radius: 7px;
-	 	-moz-border-radius: 7px;
-			  border-radius: 7px;
-	margin-top: 5px;
-}
+.mrca_wrapper { display: none; border: 1px solid silver; background: #eee; padding: 5px 10px; -webkit-border-radius: 7px; -moz-border-radius: 7px; border-radius: 7px; margin-top: 5px; } 
 
-.mrca_wrapper.visible {
-	display:block;
-}
+.mrca_wrapper.visible {display:block; } 
 
-.hidden {
-	display: none;
-}
+.hidden {display: none; } 
+
+#loader_overlay {position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; background: rgba(255,255,255,0.7) url(../gfx/loader.gif) 50% 50% no-repeat; z-index: 300; }
 
 
-#loader_overlay {
-	position: absolute;
-	top: 0px;
-	left: 0px;
-	width: 100%;
-	height: 100%;
-	background: rgba(255,255,255,0.7) url(../gfx/loader.gif) 50% 50% no-repeat;
-	z-index: 300;
-}
+/*** FRONTEND ***/
+
+/** covers_wo (Default) **/
+
+ul.music,
+ul.music li,
+ul.music li a,
+ul.music li img{ margin:0; padding:0; list-style:none; list-style-type: none !important; border:0; text-decoration:none; }
+ul.music li{ margin:15px 15px 15px 0 !important; float:left; position:relative; } 
+ul.music li a{ display:block; position:relative; float:left; width:80px; height:80px; text-indent:-1000em; overflow:hidden; z-index:1; cursor: pointer; } 
+ul.music li img{ position:absolute; width:80px; height:80px; border:0; }
+
+/* Jewel Case */
+ul.music li.jewel img{ width:72px; height:72px; top:3px; left:12px; } 
+ul.music li.jewel a{ background:url(../gfx/jewel.png) 0 0 no-repeat; width:90px; height:82px; } 
+ul.music li.jewel{ background:url(../gfx/blank_insert.gif) 12px 3px no-repeat; }
+
+/* Vinyl Sleeve */
+ul.music li.vinyl img{ width:72px; height:72px; left:2px; top:1px; } 
+ul.music li.vinyl a{ background:url(../gfx/vinyl.png) 0 0 no-repeat; width:96px; /*height:76px;*/ height: 82px; } 
+ul.music li.vinyl{ background:url(../gfx/vinyl_insert.gif) 2px 1px no-repeat; }
+
+/* Compact Disc */
+ul.music li.cd img, 
+ul.music li.cd a{ width:82px; height:82px; top:0; left:0; } 
+ul.music li.cd a{ background:url(../gfx/cd-ddd.png) 0 0 no-repeat; height:86px; } 
+ul.music li.cd{ background:url(../gfx/blank_cd.jpg) 0 0 no-repeat; } 
+
+/** covers **/
+
+ul.simplemusic li { display: block; float: left; width: 100px; height: 100px; margin: 10px 10px 0 0 !important; padding: 0px; position: relative; }
+ul.simplemusic li img { width: 100px; height: 100px; position: absolute; top: 0px; left: 0px; z-index: 0;}
+ul.simplemusic li a { display: none; width: 90px; height: 90px; position: absolute; top: 0px; padding: 5px; left: 0px; z-index: 2; background: rgba(0,0,0,0.8); color: #fff; font-size: 11px; }
+ul.simplemusic li:hover a { display: block;  }
+ul.simplemusic a span { display: none; }
+ul.simplemusic a span.mrc_artist,
+ul.simplemusic a span.mrc_title { display: block; }
+ul.simplemusic a span.mrc_title { font-weight: bold; }
+
+ul.simplemusic a span.mrc_format,
+ul.simplemusic a span.mrc_label { display: inline;  color: #bbb; }
+
+/** list **/
+ul.simple { list-style-type: none !important; }
+ul.simple li:nth-child(odd) { background-color: #eee; }
 
 
-
-/** FRONT STYLES **/
-ul.mrc {
-	float: left;
-	list-style: none;
-	margin: 0; 
-	width: 600px;
-}
-ul.mrc li {
-	margin: 10px; 
-	float: left;
-	position: relative;  /* Set the absolute positioning base coordinate */
-	width: 100px;
-	height: 100px;
-	cursor: pointer;
-}
-ul.mrc li img {
-	width: 100px; height: 100px; /* Set the small thumbnail size */
-	-ms-interpolation-mode: bicubic; /* IE Fix for Bicubic Scaling */
-	z-index: 22;
-	padding: 0;
-	border: 1px solid #ddd;
-	background: #f0f0f0;
-	position: absolute;
-	right: 0; 
-	top: 0;
-}
-
-ul.mrc li p{
-	display: none;
-	position:relative;
-	z-index: 900;
-	/*padding: 5px;*/
-	color: white;
-	font-size: 10px;
-	background-color: rgba(0,0,0,.7);
-	width: 90px;
-	margin: 1px 0px 0px -1px;
-	padding: 5px;
-	height: 50px;
-	overflow: hidden;
-}
-
-			ul.music,
-			ul.music li,
-			ul.music li a,
-			ul.music li img{
-				margin:0;
-				padding:0;
-				list-style:none;
-				list-style-type: none !important;
-				border:0;
-				text-decoration:none;
-			}
-			ul.music li{
-				margin:15px 15px 15px 0 !important;
-				float:left;
-				position:relative;
-			}
-			ul.music li a{
-				display:block;
-				position:relative;
-				float:left;	
-				width:80px;
-				height:80px;
-				text-indent:-1000em;
-				overflow:hidden;
-				z-index:1;	
-				cursor: pointer;
-			}
-			ul.music li img{
-				position:absolute;
-				width:80px;
-				height:80px;
-				border:0;
-			}
-			
-			/* Jewel Case */
-			ul.music li.jewel img{
-				width:72px;
-				height:72px;
-				top:3px;
-				left:12px;
-			}			
-			ul.music li.jewel a{
-				background:url(../gfx/jewel.png) 0 0 no-repeat;
-				width:90px;
-				height:82px;							
-			}
-			ul.music li.jewel{
-				background:url(../gfx/blank_insert.gif) 12px 3px no-repeat;							
-			}
-			
-			
-			/* Vinyl Sleeve */
-			ul.music li.vinyl img{
-				width:72px;
-				height:72px;
-				left:2px;
-				top:1px;
-			}			
-			ul.music li.vinyl a{
-				background:url(../gfx/vinyl.png) 0 0 no-repeat;
-				width:96px;
-				/*height:76px;		*/
-				height: 82px;
-			}
-			ul.music li.vinyl{
-				background:url(../gfx/vinyl_insert.gif) 2px 1px no-repeat;							
-			}
-			
-			
-			/* Compact Disc */
-			ul.music li.cd img,
-			ul.music li.cd a{
-				width:82px;
-				height:82px;
-				top:0;
-				left:0;
-			}			
-			ul.music li.cd a{
-				background:url(../gfx/cd-ddd.png) 0 0 no-repeat;			
-				height:86px;
-			}
-			ul.music li.cd{
-				background:url(../gfx/blank_cd.jpg) 0 0 no-repeat;							
-			}
-			
-ul.simple{
-	list-style-type: none;
-	cursor:pointer;
-}
-
-ul.simple li:nth-child(even){
-	background-color: rgba(0,0,0,.1);
-}
-
-.mrc_d_foot{
-	clear:both;
-	font-size: 10px;
-	color: #777777;
-}
-
-
-*:first-child+html ul.mrc li p{background-color: #000;}
-* html ul.mrc li p{background-color: #000;}
-		
-.entry ul li:before, #sidebar ul ul li:before {
-	content: "" !important;
-	}
+.mrc_d_foot{clear: both; }

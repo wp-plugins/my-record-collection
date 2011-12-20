@@ -124,7 +124,12 @@ function mrc_destroy() {
 }
 
 function get_file_from_url($src){
+	// returns file content
 	return file_get_contents($src);
+}
+
+function parse_boolean($obj) {
+    return filter_var($obj, FILTER_VALIDATE_BOOLEAN);
 }
 
 
@@ -150,7 +155,13 @@ switch($fnc){
 	case 'savesettings':
 		update_option( 
 			'mrc_settings',
-			array("display" => $_POST['display'],"sort" => $_POST['sort'],"sortway" => $_POST['sortway']),
+			array(
+				"display" => $_POST['display'],
+				"sort" => $_POST['sort'],
+				"sortway" => $_POST['sortway'],
+				"removenum" => parse_boolean($_POST['r_num']),
+				"removethe" => parse_boolean($_POST['r_the'])
+				),
 			'', 
 			'yes' 
 		);
@@ -168,6 +179,8 @@ if(!empty($username)){
 }
 $db_num = mrc_num_db_rows();
 $discogs_num = (isset($discogs_num) ? $discogs_num : 0);
+$removenum = (isset($settings['removenum']) ? $settings['removenum'] : false);
+$removethe = (isset($settings['removethe']) ? $settings['removethe'] : false);
 ?>
 		
 <div class="wrap mrcAdmin"> 
@@ -188,18 +201,23 @@ $discogs_num = (isset($discogs_num) ? $discogs_num : 0);
 		<h4><?=__( '3. Display settings' , 'my-record-collection')?></h4>
 		<p>
 			<strong><?php _e('Select way to display your collection' , 'my-record-collection') ?></strong>: <br>
-			<input type="radio" <?php if($settings['display'] == 'list') echo "checked "; ?>value="list" name="display"> <?php _e('List mode' , 'my-record-collection') ?><br>
-			<input type="radio" <?php if($settings['display'] == 'covers') echo "checked "; ?>value="covers" name="display"> <?php _e('Recordcovers mode' , 'my-record-collection') ?><br>
-			<input type="radio" <?php if($settings['display'] == 'covers_wo') echo "checked "; ?>value="covers_wo" name="display"> <?php _e('Recordcovers with overlays mode' , 'my-record-collection') ?>
+			<label><input type="radio" <?php if($settings['display'] == 'list') echo "checked "; ?>value="list" name="display"> <?php _e('List mode' , 'my-record-collection') ?><br></label>
+			<label><input type="radio" <?php if($settings['display'] == 'covers') echo "checked "; ?>value="covers" name="display"> <?php _e('Recordcovers mode' , 'my-record-collection') ?><br></label>
+			<label><input type="radio" <?php if($settings['display'] == 'covers_wo') echo "checked "; ?>value="covers_wo" name="display"> <?php _e('Recordcovers with overlays mode' , 'my-record-collection') ?></label>
 		</p> 
 		<p>
 			<strong><?php _e('Select sort order' , 'my-record-collection') ?></strong>: <br>
-			<input type="radio" <?php if($settings['sort'] == 'alphaartist') echo "checked "; ?>value="alphaartist" name="sort"> <?php _e('Alphabetical (artist)' , 'my-record-collection') ?><br>
-			<input type="radio" <?php if($settings['sort'] == 'alfatitle') echo "checked "; ?>value="alphatitle" name="sort"> <?php _e('Alphabetical (title)' , 'my-record-collection') ?><br>
-			<input type="radio" <?php if($settings['sort'] == 'year') echo "checked "; ?>value="year" name="sort"> <?php _e('Year' , 'my-record-collection') ?><br>
-			<input type="radio" <?php if($settings['sort'] == 'format') echo "checked "; ?>value="format" name="sort"> <?php _e('Format' , 'my-record-collection') ?><br><br>
-			<input type="radio" <?php if($settings['sortway'] == 'asc') echo "checked "; ?>value="asc" name="sortway"> <?php _e('Ascending' , 'my-record-collection') ?> 
-			<input type="radio" <?php if($settings['sortway'] == 'desc') echo "checked "; ?>value="desc" name="sortway"> <?php _e('Descending' , 'my-record-collection') ?>
+			<label><input type="radio" <?php if($settings['sort'] == 'alphaartist') echo "checked "; ?>value="alphaartist" name="sort"> <?php _e('Alphabetical (artist)' , 'my-record-collection') ?><br>
+			<label><input type="radio" <?php if($settings['sort'] == 'alfatitle') echo "checked "; ?>value="alphatitle" name="sort"> <?php _e('Alphabetical (title)' , 'my-record-collection') ?></label><br>
+			<label><input type="radio" <?php if($settings['sort'] == 'year') echo "checked "; ?>value="year" name="sort"> <?php _e('Year' , 'my-record-collection') ?></label><br>
+			<label><input type="radio" <?php if($settings['sort'] == 'format') echo "checked "; ?>value="format" name="sort"> <?php _e('Format' , 'my-record-collection') ?></label><br><br>
+			<label><input type="radio" <?php if($settings['sortway'] == 'asc') echo "checked "; ?>value="asc" name="sortway"> <?php _e('Ascending' , 'my-record-collection') ?></label> 
+			<label><input type="radio" <?php if($settings['sortway'] == 'desc') echo "checked "; ?>value="desc" name="sortway"> <?php _e('Descending' , 'my-record-collection') ?></label>
+		</p>
+		<p>
+			<strong><?php _e('Extra settings' , 'my-record-collection') ?></strong>: <br>
+			<label><input type="checkbox" value="removenum" id="removenum" <?php if($removenum) echo "checked "; ?>> <?php _e('Remove extra numbers in artist names, (eg. change "Creative (2)" to "Creative"' , 'my-record-collection') ?></label><br>
+			<label><input type="checkbox" value="removethe" id="removethe" <?php if($removethe) echo "checked "; ?>> <?php _e('Remove ", The" in artist names, (eg. change "Beatles, The" to "Beatles"' , 'my-record-collection') ?></label>
 		</p>
 		<input type="button" id="save_settings" class="button-primary" value="<?php _e('Save Settings' , 'my-record-collection') ?>" /
 	</div>
