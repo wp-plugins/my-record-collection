@@ -59,6 +59,7 @@ ul.simple li:nth-child(odd) { background-color: #eee; }
 /** MRC_info_tooltip **/
 #MRC_info_tooltip { display: none; width: 223px; height: 95px; background: url(../gfx/overlayBaW.png) top right no-repeat; position: absolute; padding: 5px; z-index: 7; }
 #MRC_info_tooltip.alternative { background-position: top left !important; }
-
+#MRC_info_tooltip .info {width: 45%; float: right; color: #fff; text-align: right; font-size: 11px; padding: 3px; word-wrap: break-word; }
+#MRC_info_tooltip.alternative .info { float: left; text-align: left;}
 
 .mrc_d_foot{clear: both; }

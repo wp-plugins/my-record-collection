@@ -91,6 +91,11 @@ jQuery(document).ready(function($) {
 		}
 	);
 	
+	$(window).resize(function() {
+		$('ul.music').MRCinfo('setCount',$('ul.music'));
+	});
+	
+	
 });
 
 var MRCsettings = {
@@ -109,9 +114,9 @@ var MRCsettings = {
 				var $this = $(this),
 				data = $this.data('tooltip');
 	
-				MRCsettings.onEachRow = Math.floor($this.parent().width() / 110 );
+				methods.setCount($this);
 
-				$(document.body).append('<div id="MRC_info_tooltip"></div>');
+				$(document.body).append('<div id="MRC_info_tooltip"><div class="info"></div></div>');
 			});
 		},
 		leftOrRight : function ( index, width, p ) {
@@ -125,24 +130,25 @@ var MRCsettings = {
 				pos = { left : (p.left - width - 33), top: p.top - 14 };
 				$('#MRC_info_tooltip').addClass('alternative');
 			}
-			console.log($('#MRC_info_tooltip'));
 			return pos;
 		},
 		getContent : function( elem ) { 
 			var artist = elem.find('.mrc_artist').text(),
 				 title = elem.find('.mrc_title').text();
-			return artist+'<br>'+title;
+			return artist+'<br><b>'+title+'</b>';
 		},
 		showInfo : function( elem ) {
 			var lor = methods.leftOrRight(elem.index(),elem.width(),elem.offset());
-			//methods.getContent(elem)
+			//
+			$('#MRC_info_tooltip').find('.info').html(methods.getContent(elem));
 			$('#MRC_info_tooltip').hide().css(lor).show();		
 			
 		},
 		hideInfo : function( ) { 
 			$('#MRC_info_tooltip').hide();	
 		},
-		update : function( content ) { // ...
+		setCount : function( $this ) { 
+			MRCsettings.onEachRow = Math.floor($this.parent().width() / 110 );
 		}
 	};
 
