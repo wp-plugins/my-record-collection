@@ -98,7 +98,9 @@ var MRCsettings = {
 	tt: $('#MRC_info_tooltip')
 };
 
+
 (function( $ ){
+
 	var methods = {
 		init : function( options ) {
 
@@ -117,10 +119,13 @@ var MRCsettings = {
 				 lor = (mod == MRCsettings.onEachRow-1 ? 'left' : 'right'),
 				pos;
 			if(lor == 'right'){
-				pos = { left : (p.left -10), top: p.top - 12 };
+				pos = { left : (p.left -12), top: p.top - 14 };
+				$('#MRC_info_tooltip').removeClass('alternative');
 			}else{
-				pos = { right : (p.left + width + 10), top: p.top - 12 };
+				pos = { left : (p.left - width - 33), top: p.top - 14 };
+				$('#MRC_info_tooltip').addClass('alternative');
 			}
+			console.log($('#MRC_info_tooltip'));
 			return pos;
 		},
 		getContent : function( elem ) { 
@@ -130,7 +135,8 @@ var MRCsettings = {
 		},
 		showInfo : function( elem ) {
 			var lor = methods.leftOrRight(elem.index(),elem.width(),elem.offset());
-			$('#MRC_info_tooltip').hide().html(methods.getContent(elem)).css(lor).show();		
+			//methods.getContent(elem)
+			$('#MRC_info_tooltip').hide().css(lor).show();		
 			
 		},
 		hideInfo : function( ) { 
