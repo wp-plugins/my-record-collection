@@ -184,7 +184,8 @@ function mrc_localize_vars() {
 	 $settings = get_option('mrc_settings');
     return array(
         'SiteUrl' => get_bloginfo('url'),
-		  'lightOrDark' => (isset($settings['colormode']) ? $settings['colormode'] : 'dark')
+		'lightOrDark' => (isset($settings['colormode']) ? $settings['colormode'] : 'dark'),
+		'saveMsg' => __('Your changes are saved!', 'my-record.collection')
     );
 } //End localize_vars
 

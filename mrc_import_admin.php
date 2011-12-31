@@ -236,6 +236,8 @@ switch($fnc){
 		echo $data;
 		break;
 	case 'resetuser':
+		mrc_db_truncate();
+		delete_option( 'mrc_settings' );
 		delete_option( 'mrc_username' );	
 		break;
 	case 'add2db':

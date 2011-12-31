@@ -78,7 +78,7 @@ jQuery(document).ready(function($) {
 				};
 				$.post('/wp-content/plugins/my-record-collection/mrc_import_admin.php',
 					values,function(){
-						alert('sparat');
+						alert(mrc_loc.saveMsg);
 				});
 			}
 		}
