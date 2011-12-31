@@ -1,16 +1,16 @@
-﻿=== My Record Collection ===
+=== My Record Collection ===
 Contributors: volmar
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JYQDTFTHS458E
 Tags: music, records, collection, discogs.com, record collection
 Requires at least: 2.8
 Tested up to: 3.0
-Stable tag: 0.9.2
+Stable tag: 1.0.0
 
 My Record Collection (MRC) is a plugin for WordPress that lets you display your recordcollection on Discogs.com in your blog.
 
 == Description ==
 
-My Record Collection (MRC) is a plugin for WordPress that lets you display your recordcollection on Discogs.com in your blog. To use it you simply export your collection on Discogs to a XML-file and imports it in the MRC plugin.
+My Record Collection (MRC) is a plugin for WordPress that lets you display your recordcollection on Discogs.com in your blog.
 
 == Installation ==
 
@@ -24,11 +24,14 @@ My Record Collection (MRC) is a plugin for WordPress that lets you display your 
 
 = Where do i export my collection on discogs? =
 
+Not needed in the new version (1.0+). 
+
+if you're still using the old version: 
 When you’re logged in to discogs you have a `Export My Data` link under `My Discogs`. You can also use [this link](http://www.discogs.com/users/export "Export your discogs collection") to reach the page. Remember to export your collection as XML.
 
 = If i add a new record to my collection on discogs, will it automaticly be included in my blog? =
 
-Unfortunately not, the Discogs API does not have any functinality to handle collections at this moment. It’s said to be included in the next API-update. When the API is updated i’ll include a live update function to the plugin.
+No but you can easily update your collection in the MRC-settings.
 
 = How can i translate MRC to my language? =
 
@@ -36,11 +39,17 @@ In the `/i18n/` directory you can find `my-record-collection.pot` translate this
 
 == Screenshots ==
 
-1. Image from the administration page
-2. Part of a record collection as seen on your blog.
-3. Details about a record.
+1. Part of a record collection as seen on your blog.
+2. Details about a record.
+3. Image from the administration page
 
 == Changelog ==
+
+= 1.0.0 =
+* Whole plugin rewritten!
+* No need to export your collection on discogs.com
+* Plugin now using Discogs API 2.0
+* Lot's of other changes
 
 = 0.9.2 =
 * Fixed bug that sometimes occurs when displaying the record info.

@@ -1,0 +1,143 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: my-record-collection\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-12-31 15:07+0100\n"
+"PO-Revision-Date: 2011-12-31 15:07+0100\n"
+"Last-Translator: Arvid Sollenby <arvid.sollenby@gmail.com>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-KeywordsList: _;_e\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: mrc_import_admin.php:283
+msgid "My Record Collection Options"
+msgstr ""
+
+#: mrc_import_admin.php:285
+msgid "1. Enter Username"
+msgstr ""
+
+#: mrc_import_admin.php:286
+msgid "Username:"
+msgstr ""
+
+#: mrc_import_admin.php:286
+msgid "Import userdata"
+msgstr ""
+
+#: mrc_import_admin.php:287
+msgid "Reset userinfo"
+msgstr ""
+
+#: mrc_import_admin.php:290
+msgid "2. Recordinfo"
+msgstr ""
+
+#: mrc_import_admin.php:291
+msgid "Records in collection"
+msgstr ""
+
+#: mrc_import_admin.php:292
+msgid "Import records to database"
+msgstr ""
+
+#: mrc_import_admin.php:293
+msgid "Records in database"
+msgstr ""
+
+#: mrc_import_admin.php:294
+msgid "Missmatch between rocords in local DB and Discogs DB.<br> If you have added records on discogs, you'll need to:<br>"
+msgstr ""
+
+#: mrc_import_admin.php:294
+msgid "Update records in database"
+msgstr ""
+
+#: mrc_import_admin.php:297
+msgid "3. Display settings"
+msgstr ""
+
+#: mrc_import_admin.php:299
+msgid "Select way to display your collection"
+msgstr ""
+
+#: mrc_import_admin.php:300
+msgid "List mode"
+msgstr ""
+
+#: mrc_import_admin.php:301
+msgid "Recordcovers mode"
+msgstr ""
+
+#: mrc_import_admin.php:302
+msgid "Recordcovers with overlays mode"
+msgstr ""
+
+#: mrc_import_admin.php:305
+msgid "Select sort order"
+msgstr ""
+
+#: mrc_import_admin.php:306
+msgid "Alphabetical (artist)"
+msgstr ""
+
+#: mrc_import_admin.php:307
+msgid "Alphabetical (title)"
+msgstr ""
+
+#: mrc_import_admin.php:308
+msgid "Year"
+msgstr ""
+
+#: mrc_import_admin.php:309
+msgid "Format"
+msgstr ""
+
+#: mrc_import_admin.php:310
+msgid "Ascending"
+msgstr ""
+
+#: mrc_import_admin.php:311
+msgid "Descending"
+msgstr ""
+
+#: mrc_import_admin.php:314
+msgid "Extra settings"
+msgstr ""
+
+#: mrc_import_admin.php:315
+msgid "Remove extra numbers in artist names, (eg. change \"Creative (2)\" to \"Creative\""
+msgstr ""
+
+#: mrc_import_admin.php:316
+msgid "Remove \", The\" in artist names, (eg. change \"Beatles, The\" to \"Beatles\""
+msgstr ""
+
+#: mrc_import_admin.php:319
+msgid "Color mode"
+msgstr ""
+
+#: mrc_import_admin.php:320
+msgid "Dark on Light BG"
+msgstr ""
+
+#: mrc_import_admin.php:321
+msgid "Light on Dark BG"
+msgstr ""
+
+#: mrc_import_admin.php:323
+msgid "Save Settings"
+msgstr ""
+
+#: mrc_import_admin.php:326
+msgid "4. How to display your collection"
+msgstr ""
+
+#: mrc_import_admin.php:327
+msgid "To display your collection, create a new page and add the following text <strong>in HTML-mode</strong>: <code>&lt;!--MyRecordCollection--&gt;</code>"
+msgstr ""
+

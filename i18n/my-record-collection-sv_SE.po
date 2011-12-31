@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: my-record-collection\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-30 13:52+0100\n"
-"PO-Revision-Date: 2011-12-30 17:50+0100\n"
+"POT-Creation-Date: 2011-12-31 15:02+0100\n"
+"PO-Revision-Date: 2011-12-31 15:03+0100\n"
 "Last-Translator: Arvid Sollenby <arvid.sollenby@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -13,178 +13,180 @@ msgstr ""
 "X-Poedit-Basepath: ../\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: disp.php:57
-msgid "Tracklisting"
-msgstr "Låtlista"
-
-#: disp.php:81
-msgid "Notes"
-msgstr "Noteringar"
-
-#: disp.php:88
-msgid "Credits"
-msgstr "Credits"
-
-#: disp.php:94
-#: disp.php:102
-msgid "tracks"
-msgstr "låtar"
-
-#: disp.php:204
+#: mrc_import_admin.php:166
 msgid "Label"
 msgstr "Skivbolag"
 
-#: disp.php:208
+#: mrc_import_admin.php:167
 msgid "Catalog#"
 msgstr "Katalognummer"
 
-#: disp.php:212
-#: mrc_import_admin.php:215
+#: mrc_import_admin.php:168
+#: mrc_import_admin.php:309
 msgid "Format"
 msgstr "Format"
 
-#: disp.php:216
+#: mrc_import_admin.php:169
 msgid "Country"
 msgstr "Land"
 
-#: disp.php:220
+#: mrc_import_admin.php:170
 msgid "Released"
 msgstr "Släppt"
 
-#: disp.php:224
+#: mrc_import_admin.php:171
 msgid "Genre"
 msgstr "Genre"
 
-#: mrc_import_admin.php:189
+#: mrc_import_admin.php:172
+msgid "Tracklisting"
+msgstr "Låtlista"
+
+#: mrc_import_admin.php:193
+msgid "Credits"
+msgstr "Credits"
+
+#: mrc_import_admin.php:199
+#: mrc_import_admin.php:207
+msgid "tracks"
+msgstr "låtar"
+
+#: mrc_import_admin.php:283
 msgid "My Record Collection Options"
 msgstr "My Record Collection Inställningar"
 
-#: mrc_import_admin.php:191
+#: mrc_import_admin.php:285
 msgid "1. Enter Username"
 msgstr "1. Skriv in användarnam"
 
-#: mrc_import_admin.php:192
+#: mrc_import_admin.php:286
 msgid "Username:"
 msgstr "Användarnamn:"
 
-#: mrc_import_admin.php:192
+#: mrc_import_admin.php:286
 msgid "Import userdata"
 msgstr "Importera användardata"
 
-#: mrc_import_admin.php:193
+#: mrc_import_admin.php:287
 msgid "Reset userinfo"
 msgstr "Återställ användarinfo"
 
-#: mrc_import_admin.php:196
+#: mrc_import_admin.php:290
 msgid "2. Recordinfo"
 msgstr "2. Skivinformation"
 
-#: mrc_import_admin.php:197
+#: mrc_import_admin.php:291
 msgid "Records in collection"
 msgstr "Skivor i samling"
 
-#: mrc_import_admin.php:198
+#: mrc_import_admin.php:292
 msgid "Import records to database"
 msgstr "Importera skivor till databasen"
 
-#: mrc_import_admin.php:199
+#: mrc_import_admin.php:293
 msgid "Records in database"
 msgstr "Skivor i databasen"
 
-#: mrc_import_admin.php:200
+#: mrc_import_admin.php:294
 msgid "Missmatch between rocords in local DB and Discogs DB.<br> If you have added records on discogs, you'll need to:<br>"
 msgstr "Olika antal skivor i lokal databas mot discogs databas.<br>Om du har lagt till skivor på discogs behöver du:<br>"
 
-#: mrc_import_admin.php:200
+#: mrc_import_admin.php:294
 msgid "Update records in database"
 msgstr "Uppdatera skivor i databas"
 
-#: mrc_import_admin.php:203
+#: mrc_import_admin.php:297
 msgid "3. Display settings"
 msgstr "3. Visningsalternativ"
 
-#: mrc_import_admin.php:205
+#: mrc_import_admin.php:299
 msgid "Select way to display your collection"
 msgstr "Välj vilket sätt du vill visa upp din skivsamling"
 
-#: mrc_import_admin.php:206
+#: mrc_import_admin.php:300
 msgid "List mode"
 msgstr "List-läge"
 
-#: mrc_import_admin.php:207
+#: mrc_import_admin.php:301
 msgid "Recordcovers mode"
 msgstr "Skivomslags-läge"
 
-#: mrc_import_admin.php:208
+#: mrc_import_admin.php:302
 msgid "Recordcovers with overlays mode"
 msgstr "Skivomslag (med overlays)-läge"
 
-#: mrc_import_admin.php:211
+#: mrc_import_admin.php:305
 msgid "Select sort order"
 msgstr "Välj sorterings-läge"
 
-#: mrc_import_admin.php:212
+#: mrc_import_admin.php:306
 msgid "Alphabetical (artist)"
 msgstr "Alfabetisk (artist)"
 
-#: mrc_import_admin.php:213
+#: mrc_import_admin.php:307
 msgid "Alphabetical (title)"
 msgstr "Alfabetisk (titel)"
 
-#: mrc_import_admin.php:214
+#: mrc_import_admin.php:308
 msgid "Year"
 msgstr "År"
 
-#: mrc_import_admin.php:216
+#: mrc_import_admin.php:310
 msgid "Ascending"
 msgstr "Stigande"
 
-#: mrc_import_admin.php:217
+#: mrc_import_admin.php:311
 msgid "Descending"
 msgstr "Fallande"
 
-#: mrc_import_admin.php:220
+#: mrc_import_admin.php:314
 msgid "Extra settings"
 msgstr "Extrainställningar"
 
-#: mrc_import_admin.php:221
+#: mrc_import_admin.php:315
 msgid "Remove extra numbers in artist names, (eg. change \"Creative (2)\" to \"Creative\""
 msgstr "Ta bort extra nummer i artist namn, (t.ex. ändra \"Creative (2)\" till \"Creative\""
 
-#: mrc_import_admin.php:222
+#: mrc_import_admin.php:316
 msgid "Remove \", The\" in artist names, (eg. change \"Beatles, The\" to \"Beatles\""
 msgstr "Ta bort \", The\" i artist namn, (t.ex. ändra \"Beatles, The\" till \"Beatles\""
 
-#: mrc_import_admin.php:225
+#: mrc_import_admin.php:319
 msgid "Color mode"
 msgstr "Färg-läge"
 
-#: mrc_import_admin.php:226
+#: mrc_import_admin.php:320
 msgid "Dark on Light BG"
 msgstr "Mörk på ljus bakgrund"
 
-#: mrc_import_admin.php:227
+#: mrc_import_admin.php:321
 msgid "Light on Dark BG"
 msgstr "Ljus på mörk bakgrund"
 
-#: mrc_import_admin.php:229
+#: mrc_import_admin.php:323
 msgid "Save Settings"
 msgstr "Spara inställningar"
 
-#: mrc_import_admin.php:232
+#: mrc_import_admin.php:326
 msgid "4. How to display your collection"
 msgstr "4. Så här gör du för att visa upp din samling"
 
-#: mrc_import_admin.php:233
+#: mrc_import_admin.php:327
 msgid "To display your collection, create a new page and add the following text <strong>in HTML-mode</strong>: <code>&lt;!--MyRecordCollection--&gt;</code>"
 msgstr "För att visa din samling, skapa en ny sida och lägg till följande text <strong>i HTML-läge</strong>: <code>&lt;!--MyRecordCollection--&gt;</code>"
 
-#: my-record-collection.php:99
-#: my-record-collection.php:101
+#: my-record-collection.php:100
+#: my-record-collection.php:102
 msgid "Click on the cover to see more information about the record"
 msgstr "Klicka på ett omslag för mer information"
 
-#: my-record-collection.php:151
+#: my-record-collection.php:152
 msgid "This record collection is based on data from discogs.com generated by the <b>My Record Collection</b> WordPress-plugin. Discogs is a trademark of Zink Media, Inc. My Record Collection-plugin is not affiliated with or endorsed by Zink Media, Inc. All images are copyright of their respective owners. Further entry data from the Discogs database is licensed in the public domain"
 msgstr "Denna skivsamling är baserad på data från discogs.com genererat av Wordpress-plugin:en <b>My Record Collection</b>. Discogs är ett registrerat varumärke för Zink Media, Inc. My Record Collection-pluginen är inte skapad av eller för Zink Media."
 
+#: my-record-collection.php:188
+msgid "Your changes are saved!"
+msgstr "Dina ändringar har sparats!"
+
+#~ msgid "Notes"
+#~ msgstr "Noteringar"
