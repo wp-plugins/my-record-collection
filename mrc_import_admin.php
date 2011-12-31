@@ -142,16 +142,16 @@ function showRecordInfo($rID) {
 	$artist		= $data->artists[0]->name;
 	$title		= $data->title;
 	$label		= $data->labels[0]->name;
-	$catalog	  	= $data->labels[0]->catno;
-	$qty		  	= $data->formats[0]->qty;
+	$catalog	= $data->labels[0]->catno;
+	$qty		= $data->formats[0]->qty;
 	$format		= $data->formats[0];
-	$country	   = $data->country;
-	$released	= $data->released;
-	$genres		= $data->genres;
+	$country	= (isset($data->country) ? $data->country : null);
+	$released	= (isset($data->released) ? $data->released : null);
+	$genres		= (isset($data->genres) ? $data->genres : null);
 	$tracks		= $data->tracklist;
-	$credits	   = $data->extraartists;
+	$credits	= $data->extraartists;
 	$notes	  	= (isset($data->notes) ? $data->notes : null);
-	$thumb	  	= (!is_null($data->thumb) ? $data->thumb : null);
+	$thumb	  	= (isset($data->thumb) ? $data->thumb : null);
 	
 	$f = "";
 	if($qty > 1){
@@ -159,9 +159,7 @@ function showRecordInfo($rID) {
 	}
 	$f .= $format->name;
 	
-	foreach($format->descriptions as $d){
-		$f .= ", ".$d;
-	}
+	$f .= ', '.implode(', ',(isset($format->descriptions) ? $format->descriptions : array(null)));
 	
 	if(!is_null($thumb)) { echo '<div id="MRC_INFO"><img src="'.$thumb.'" class="disp_img">'; } 
 	echo "<h2>$artist - $title</h2>";
