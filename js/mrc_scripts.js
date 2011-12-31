@@ -64,7 +64,8 @@ jQuery(document).ready(function($) {
 				sort = SettingsContainer.find('input[name=sort]:checked').val(),
 				way  = SettingsContainer.find('input[name=sortway]:checked').val(),
 				num  = SettingsContainer.find('#removenum').prop('checked'),
-				the  = SettingsContainer.find('#removethe').prop('checked');
+				the  = SettingsContainer.find('#removethe').prop('checked'),
+				col  = SettingsContainer.find('input[name=colormode]:checked').val();
 			if(mode && sort && way){
 				var values = {
 					fnc 	: 'savesettings',
@@ -72,7 +73,8 @@ jQuery(document).ready(function($) {
 					sort 	: sort,
 					sortway : way,
 					r_num	: num,
-					r_the	: the
+					r_the	: the,
+					col	: col
 				};
 				$.post('/wp-content/plugins/my-record-collection/mrc_import_admin.php',
 					values,function(){
@@ -95,6 +97,16 @@ jQuery(document).ready(function($) {
 		$('ul.music').MRCinfo('setCount',$('ul.music'));
 	});
 	
+	$('#MyRecordCollection').find('a').bind('click', function(e){
+		e.preventDefault();
+		var rid = $(this).parent().data('record');
+		$.fancybox.open({
+			href : mrc_loc.SiteUrl+'/wp-content/plugins/my-record-collection/mrc_import_admin.php?recordID='+rid,
+			type : 'ajax',
+			scrolling : 'no'
+		});
+	});
+	
 	
 });
 
@@ -115,8 +127,11 @@ var MRCsettings = {
 				data = $this.data('tooltip');
 	
 				methods.setCount($this);
+				if(mrc_loc.lightOrDark == "light"){
+					var addClass = ' class="light"';
+				}
 
-				$(document.body).append('<div id="MRC_info_tooltip"><div class="info"></div></div>');
+				$(document.body).append('<div id="MRC_info_tooltip"'+addClass+'><div class="info"></div></div>');
 			});
 		},
 		leftOrRight : function ( index, width, p ) {
@@ -134,8 +149,9 @@ var MRCsettings = {
 		},
 		getContent : function( elem ) { 
 			var artist = elem.find('.mrc_artist').text(),
-				 title = elem.find('.mrc_title').text();
-			return artist+'<br><b>'+title+'</b>';
+				 title = elem.find('.mrc_title').text(),
+				 einfo =  elem.find('.mrc_format').text() +', '+elem.find('.mrc_label').text();
+			return artist+'<br><b>'+title+'</b><span>'+einfo+'</span>';
 		},
 		showInfo : function( elem ) {
 			var lor = methods.leftOrRight(elem.index(),elem.width(),elem.offset());

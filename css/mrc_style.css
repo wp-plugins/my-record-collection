@@ -60,6 +60,59 @@ ul.simple li:nth-child(odd) { background-color: #eee; }
 #MRC_info_tooltip { display: none; width: 223px; height: 95px; background: url(../gfx/overlayBaW.png) top right no-repeat; position: absolute; padding: 5px; z-index: 7; }
 #MRC_info_tooltip.alternative { background-position: top left !important; }
 #MRC_info_tooltip .info {width: 45%; float: right; color: #fff; text-align: right; font-size: 11px; padding: 3px; word-wrap: break-word; }
-#MRC_info_tooltip.alternative .info { float: left; text-align: left;}
+#MRC_info_tooltip.alternative .info { float: left; text-align: left; }
+#MRC_info_tooltip .info span { display: block; color: #666; }
 
-.mrc_d_foot{clear: both; }
+.mrc_d_foot{ clear: both; }
+
+/** Light mode **/
+#MyRecordCollection.light,
+#MyRecordCollection.light a { color: #fff; }
+#MyRecordCollection.light ul.simple li:nth-child(odd) { background-color: #333; }
+
+#MRC_info_tooltip.light { background-position: bottom right; color: #000; }
+#MRC_info_tooltip.light.alternative { background-position: bottom left !important; color: #000; }
+#MRC_info_tooltip.light .info { color: #000; }
+
+
+/** DISPLAY INFO **/
+#MRC_INFO { font-family: Arial, Verdana, Helvetica, sans-serif; font-size: 12px; padding: 0px;  }
+.tracks{
+	clear: both;
+	width: 450px;
+	font-size: 12px;
+	border-spacing: 0;
+	padding-left: 0;
+	padding-top: 5px;
+}
+
+.tracks th{
+	padding: 2px;
+	color: #444;
+	text-align: left;
+	background-color: #eee;
+	border-bottom: 1px solid #555;
+}
+
+.tracks td{
+	padding: 2px;
+	color: #000;
+	vertical-align: top;
+	text-align: left;
+	border-bottom: 1px solid #ddd;
+}
+#MRC_INFO img { float: left; border: 1px solid #333; margin: 0 5px 5px 0;  }
+#MRC_INFO h2 { display: inline; font-size: 14px; }
+#MRC_INFO div { margin-top: 5px; line-height: 1.3;}
+#MRC_INFO .label { display: inline-block; width: 100px; }
+#MRC_INFO p.credits { line-height: 1.2; width: 450px; }
+#MRC_INFO p.credits b {
+	margin-top: 5px;
+	width: 450px;
+	display: block;
+	padding: 2px;
+	color: #444;
+	text-align: left;
+	background-color: #eee;
+	border-bottom: 1px solid #555;
+}

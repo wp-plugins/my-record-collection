@@ -16,7 +16,7 @@ function mrc_admin() {
 // ADD SCRIPTS TO ADMIN PAGE
 function mrc_js(){
 	wp_deregister_script( 'jquery' );
-	wp_register_script( 'jquery', 'http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js');
+	wp_register_script( 'jquery', 'http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js');
 	wp_enqueue_script( 'jquery' );
 	wp_enqueue_script('mrcScript', WP_PLUGIN_URL . '/my-record-collection/js/mrc_scripts.js');
 	wp_localize_script( 'mrcScript', 'mrc_loc', mrc_localize_vars());
@@ -74,6 +74,7 @@ function mrc_display($text) {
 	
 	$settings = get_option('mrc_settings');
 	$mode = $settings['display'];
+	$darkOrLight = (isset($settings['colormode']) ? ' class="'.$settings['colormode'].'"' : ' class="dark"');
 	//Only perform plugin functionality if post/page text has <!--MyRecordCollection-->
 	if (preg_match("|<!--MyRecordCollection-->|", $text)) {
 		$wpdb->query("SET NAMES 'utf8'");
@@ -94,11 +95,11 @@ function mrc_display($text) {
 	
 		$record_rows = $wpdb->get_results("SELECT * FROM  `".$wpdb->prefix."mrc_records` ORDER BY $order");
 		if($mode == "list"){
-			$posts = '<div id="MyRecordCollection"><ul class="simple">';
+			$posts = '<div id="MyRecordCollection"'.$darkOrLight.'><ul class="simple">';
 		}else if($mode == "covers"){
-			$posts = '<div id="MyRecordCollection"><p>'.__('Click on the cover to see more information about the record', 'my-record-collection').'.</p><ul class="simplemusic">';
+			$posts = '<div id="MyRecordCollection"'.$darkOrLight.'><p>'.__('Click on the cover to see more information about the record', 'my-record-collection').'.</p><ul class="simplemusic">';
 		}else{
-			$posts = '<div id="MyRecordCollection"><p>'.__('Click on the cover to see more information about the record', 'my-record-collection').'.</p><ul class="music">';
+			$posts = '<div id="MyRecordCollection"'.$darkOrLight.'><p>'.__('Click on the cover to see more information about the record', 'my-record-collection').'.</p><ul class="music">';
 		}
 		
 		foreach ($record_rows as $rec) {
@@ -170,16 +171,20 @@ function conditionally_add_scripts_and_styles($posts){
 		// enqueue here
 		wp_enqueue_script('jquery');
 		wp_enqueue_script('mrcScript', WP_PLUGIN_URL . '/my-record-collection/js/mrc_scripts.js');
+		wp_enqueue_script('fancybox', WP_PLUGIN_URL . '/my-record-collection/js/plugins/fancybox/jquery.fancybox.pack.js');
 		wp_localize_script( 'mrcScript', 'mrc_loc', mrc_localize_vars());
 		wp_enqueue_style('mrcStyle', WP_PLUGIN_URL . '/my-record-collection/css/mrc_style.css');
+		wp_enqueue_style('fancybox', WP_PLUGIN_URL . '/my-record-collection/js/plugins/fancybox/jquery.fancybox.css');
 	}
  
 	return $posts;
 }
 
 function mrc_localize_vars() {
+	 $settings = get_option('mrc_settings');
     return array(
-        'SiteUrl' => get_bloginfo('url')
+        'SiteUrl' => get_bloginfo('url'),
+		  'lightOrDark' => (isset($settings['colormode']) ? $settings['colormode'] : 'dark')
     );
 } //End localize_vars
 

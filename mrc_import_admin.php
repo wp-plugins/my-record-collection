@@ -132,8 +132,99 @@ function parse_boolean($obj) {
     return filter_var($obj, FILTER_VALIDATE_BOOLEAN);
 }
 
+function PP($tjo){
+	highlight_string(print_r($tjo,1));
+}
+
+function showRecordInfo($rID) {
+	$data = json_decode(get_file_from_url('http://api.discogs.com/releases/'.$rID));
+	
+	$artist		= $data->artists[0]->name;
+	$title		= $data->title;
+	$label		= $data->labels[0]->name;
+	$catalog	  	= $data->labels[0]->catno;
+	$qty		  	= $data->formats[0]->qty;
+	$format		= $data->formats[0];
+	$country	   = $data->country;
+	$released	= $data->released;
+	$genres		= $data->genres;
+	$tracks		= $data->tracklist;
+	$credits	   = $data->extraartists;
+	$notes	  	= (isset($data->notes) ? $data->notes : null);
+	$thumb	  	= (!is_null($data->thumb) ? $data->thumb : null);
+	
+	$f = "";
+	if($qty > 1){
+		$f .= $qty." x ";
+	}
+	$f .= $format->name;
+	
+	foreach($format->descriptions as $d){
+		$f .= ", ".$d;
+	}
+	
+	if(!is_null($thumb)) { echo '<div id="MRC_INFO"><img src="'.$thumb.'" class="disp_img">'; } 
+	echo "<h2>$artist - $title</h2>";
+	echo '<div><span class="label">'.__('Label', 'my-record-collection').':</span>'.$label.'<br>';
+	echo '<span class="label">'.__('Catalog#', 'my-record-collection').':</span>'.$catalog.'<br>';
+	echo '<span class="label">'.__('Format', 'my-record-collection').':</span>'.$f.'<br>';
+	echo '<span class="label">'.__('Country', 'my-record-collection').':</span>'.$country.'<br>';
+	echo '<span class="label">'.__('Released', 'my-record-collection').':</span>'.$released.'<br>';
+	echo '<span class="label">'.__('Genre', 'my-record-collection').':</span>'.implode(", ",$genres).'</div>';
+	$tl = '<table class="tracks"><tr><th colspan="3"> '.__( 'Tracklisting', 'my-record-collection') .'</th></tr>';
+	foreach($tracks as $t){
+		$tl .= '<tr><td>'.$t->position.'</td><td>'.$t->title;
+		if(isset($t->extraartists)){
+			$lrole=NULL;
+			foreach($t->extraartists as $ea){
+				if(!strcmp($lrole, $ea->role)){
+					$tl .= ', '.$ea->name;
+				}else{
+					$tl .= '<br>'.$ea->role.': '.$ea->name;
+				}
+				$lrole = $ea->role;
+				
+			}
+		}
+		
+		$tl .= '</td><td>'.$t->duration.'</td></tr>';
+	}
+	$tl .= '</table>';
+	echo $tl;
+	if($credits){
+		$cred = '<p class="credits"><b>'.__( 'Credits', 'my-record-collection') .'</b>';
+		$lrole=NULL;
+		foreach ($credits as $c){
+			if(!strcmp($lrole, $c->role)){
+				$cred .= ', '.$c->name;
+				if($c->tracks){
+					$cred .= ' ('.__( 'tracks', 'my-record-collection') .': '.$c->tracks.') ';
+				}
+			}else{
+				if(!is_null($lrole)){
+					$cred .= '<br>';
+				}
+				$cred .= $c->role.' - '.$c->name;
+				if($c->tracks){
+					$cred .= ' ('.__( 'tracks', 'my-record-collection') .': '.$c->tracks.') ';
+				}
+			}
+			$lrole = $c->role;
+		}
+		$cred .= "</p>";
+		echo $cred;
+	}
+	
+	echo '</div>';
+	
+		
+}
 
 $fnc = (isset($_POST['fnc']) ? trim($_POST['fnc']) : null);
+if(isset($_GET['recordID']) && !is_null($_GET['recordID'])){
+	$fnc = 'showInfo';
+}
+
 
 $uinfo = get_option('mrc_userinfo');
 $settings = get_option('mrc_settings');
@@ -160,11 +251,15 @@ switch($fnc){
 				"sort" => $_POST['sort'],
 				"sortway" => $_POST['sortway'],
 				"removenum" => parse_boolean($_POST['r_num']),
-				"removethe" => parse_boolean($_POST['r_the'])
+				"removethe" => parse_boolean($_POST['r_the']),
+				"colormode" => $_POST['col']
 				),
 			'', 
 			'yes' 
 		);
+		break;
+	case 'showInfo':
+		showRecordInfo($_GET['recordID']);
 		break;
 	default: ?>
 	
@@ -181,6 +276,7 @@ $db_num = mrc_num_db_rows();
 $discogs_num = (isset($discogs_num) ? $discogs_num : 0);
 $removenum = (isset($settings['removenum']) ? $settings['removenum'] : false);
 $removethe = (isset($settings['removethe']) ? $settings['removethe'] : false);
+$colormode = (isset($settings['colormode']) ? $settings['colormode'] : 'dark');
 ?>
 		
 <div class="wrap mrcAdmin"> 
@@ -191,14 +287,14 @@ $removethe = (isset($settings['removethe']) ? $settings['removethe'] : false);
 		<input type="button" id="reset_username" class="button-secondary<?php if(empty($username)) echo ' hidden'; ?>" value="<?php _e('Reset userinfo' , 'my-record-collection') ?>" />
 	</div>
 	<div class="mrca_wrapper <?php if(!empty($username)) echo " visible"; ?>"> 
-		<h4><?=__( '2. Recordinfo' , 'my-record-collection')?></h4>
+		<h4><?php _e( '2. Recordinfo' , 'my-record-collection')?></h4>
 		<p><strong><?php _e('Records in collection' , 'my-record-collection') ?></strong>: <span id="discogs_recordcount"><?=$discogs_num?></span></p> 
 		<input type="button" id="import_records" class="button-primary <?php if(isset($db_num) && $db_num != 0) { echo " hidden"; } ?>" value="<?=_e('Import records to database' , 'my-record-collection')?>" />
 		<p id="records_in_db" <?php if(!isset($db_num) || $db_num == 0) { echo " class=\"hidden\""; } ?>><strong><?=_e('Records in database' , 'my-record-collection')?></strong>: <span id="db_recordcount"><?=$db_num?></span></p>
 		<p id="update_msg"<?php if($db_num == 0 || abs($db_num - $discogs_num) < 3 ) { echo ' class="hidden"'; } ?>><?php _e( 'Missmatch between rocords in local DB and Discogs DB.<br> If you have added records on discogs, you\'ll need to:<br>' , 'my-record-collection')?><input type="button" id="update_records" class="button-primary" value="<?=_e('Update records in database' , 'my-record-collection')?>" /></p>
 	</div>
 	<div class="mrca_wrapper <?php if($db_num != 0) echo " visible"; ?>" id="mrc_displaysettings"> 
-		<h4><?=__( '3. Display settings' , 'my-record-collection')?></h4>
+		<h4><?php _e( '3. Display settings' , 'my-record-collection')?></h4>
 		<p>
 			<strong><?php _e('Select way to display your collection' , 'my-record-collection') ?></strong>: <br>
 			<label><input type="radio" <?php if($settings['display'] == 'list') echo "checked "; ?>value="list" name="display"> <?php _e('List mode' , 'my-record-collection') ?><br></label>
@@ -219,127 +315,18 @@ $removethe = (isset($settings['removethe']) ? $settings['removethe'] : false);
 			<label><input type="checkbox" value="removenum" id="removenum" <?php if($removenum) echo "checked "; ?>> <?php _e('Remove extra numbers in artist names, (eg. change "Creative (2)" to "Creative"' , 'my-record-collection') ?></label><br>
 			<label><input type="checkbox" value="removethe" id="removethe" <?php if($removethe) echo "checked "; ?>> <?php _e('Remove ", The" in artist names, (eg. change "Beatles, The" to "Beatles"' , 'my-record-collection') ?></label>
 		</p>
-		<input type="button" id="save_settings" class="button-primary" value="<?php _e('Save Settings' , 'my-record-collection') ?>" /
+		<p>
+			<strong><?php _e('Color mode' , 'my-record-collection') ?></strong>: <br>
+			<label><input type="radio" <?php if($colormode == 'dark') echo "checked "; ?>value="dark" name="colormode"> <?php _e('Dark on Light BG' , 'my-record-collection') ?></label> 
+			<label><input type="radio" <?php if($colormode == 'light') echo "checked "; ?>value="light" name="colormode"> <?php _e('Light on Dark BG' , 'my-record-collection') ?></label>
+		</p>
+		<input type="button" id="save_settings" class="button-primary" value="<?php _e('Save Settings' , 'my-record-collection') ?>" />
+	</div>
+	<div class="mrca_wrapper <?php if($db_num != 0) echo " visible"; ?>" id="mrc_displaysettings"> 
+		<h4><?php _e( '4. How to display your collection' , 'my-record-collection')?></h4>
+		<p><?php _e( 'To display your collection, create a new page and add the following text <strong>in HTML-mode</strong>: <code>&lt;!--MyRecordCollection--&gt;</code>' , 'my-record-collection')?></p> 
 	</div>
 </div>
 <?php 
 }
 ?>
-
-<?/* 
-
-
-switch ($disp) {
-    case 0:?>
-		<input type="hidden" name="mrc_hidden" value="0">  
-    <?php
-			echo "<h4>" . __( 'Page 1/4: Enter Username' , 'my-record-collection') . "</h4>";?>
-				<p><?php echo __( 'Uploaded XML file:' , 'my-record-collection'); ?> <?=get_option('mrc_xml_file')?> </p>
-
-
-
-<?php
-/*
-switch ($disp) {
-    case 0:?>
-    	<input type="hidden" name="mrc_hidden" value="0">  
-      <?php
-			echo "<h4>" . __( 'Page 1/4: Enter Username' , 'my-record-collection') . "</h4>";
-				<p><?php echo __( 'Uploaded XML file:' , 'my-record-collection'); ?> <?=get_option('mrc_xml_file')?> </p>
-
-		    <? else: ?>
-		    	<?php $d_next = ' disabled="disabled"'; ?>
-		    	<p><?php _e("Username: " , 'my-record-collection'); ?><input type="text" name="mrc_discogs_username" value="<?php echo $mrc_discogs_username; ?>"></p> 
-			<? endif; ?>
-			<p class="submit"> 
-				<input type="submit" name="submit" class="button-primary" value="<?php _e('Update Options' , 'my-record-collection') ?>" /> 
-				<input type="submit" name="submit_next"<?=$d_next?> value="<?php _e('Next page &raquo;' , 'my-record-collection') ?>" />
-			</p>
-       <? break;
-     case 1:?>
-	     <input type="hidden" name="mrc_hidden" value="1">  
-	        <?php    echo "<h4>" . __( 'Page 2/4: Import XML into database' , 'my-record-collection') . "</h4>"; ?>  
-	     <p><?php _e('Uploaded XML-file is', 'my-record-collection');?>: <b><?php echo get_option('mrc_xml_file'); ?></b></p>
-		 <?php
-		 	if(mrc_num_db_rows() != 0){
-		 		printf(__("<p>The database conatains %d rows</p>", 'my-record-collection'), mrc_num_db_rows()); 
-				echo '<p><input type="checkbox" name="mrc_empty_db" value="yes" /> '.__('Empty Database', 'my-record-collection').'.</p>';
-			}else{
-				echo '<p><input type="checkbox" name="import_xml" value="yes" /> '.__('Import XML into DB', 'my-record-collection').'</p>';
-				$d_next = ' disabled="disabled"';
-			}
-		 ?>
-			<p class="submit"> 
-				<input type="submit" name="submit_prev" value="<?php _e('&laquo; Previous page' , 'my-record-collection') ?>" /> 
-				<input type="submit" name="submit" class="button-primary" value="<?php _e('Update Options' , 'my-record-collection') ?>" /> 
-				<input type="submit" name="submit_next"<?=$d_next?> value="<?php _e('Next page &raquo;' , 'my-record-collection') ?>" />
-			</p>
-     
-<? break;
-     case 2:?>
-	 	     <input type="hidden" name="mrc_hidden" value="2">  
-	        <?php    echo "<h4>" . __( 'Page 3/4: Import Images' , 'my-record-collection') . "</h4>"; ?>  
-			
-		 <?php
-			
-			$directory = MRC_URL_BASE_DIR."/my-record-collection/img/";
-			if(!file_exists($directory)){
-				mkdir($directory, 0777, true);
-			}
-			$filecount = countFiles($directory);
-			$db_img_count = mrc_num_db_imgs();
-			if($filecount == $db_img_count){
-				echo '<p class="mrc_imgimport_sucess">';
-				printf(__("All %d images imported, go to the next step to set up display-mode. Or check delete images to delet them if something went wrong.", 'my-record-collection'), $filecount); 
-				echo '</p><p class="mrc_imgimport_sucess"><input type="checkbox" name="mrc_del_imgs" value="yes" /> '.__('Delete images', 'my-record-collection').'</p>';
-				
-			}else{
-				echo '<p id="mrc_imgimport">';
-				printf(__('Importing image <span class="fc">%1d</span> of <span class="tc">%2d</span></p>', 'my-record-collection'), $filecount, $db_img_count);
-				
-				echo '<input type="button" name="mrc_imp_img" id="mrc_imp_img" value="'.__('Import Images', 'my-record-collection').'" class="button-primary">';
-				echo '<p class="mrc_imgimport_sucess" style="display:none;">'.__('All images imported, go to the next step to set up display-mode. Or check delete images to deleta them if something went wrong.', 'my-record-collection').'</p>';
-				echo '<p class="mrc_imgimport_sucess" style="display:none;"><input type="checkbox" name="mrc_del_imgs" value="yes" /> '.__('Delete images', 'my-record-collection').'.</p>';
-				$d_next = ' disabled="disabled"';
-				echo import_images_lis();
-			}
-			
-		 ?>
-			<p class="submit"> 
-				<input type="submit" name="submit_prev" value="<?php _e('&laquo; Previous page', 'my-record-collection') ?>" /> 
-				<input type="submit" name="submit" class="button-primary" value="<?php _e('Update Options', 'my-record-collection') ?>" /> 
-				<input type="submit" id="mrc_3_next" name="submit_next"<?=$d_next?> value="<?php _e('Next page &raquo;' , 'my-record-collection') ?>" />
-			</p>
-
-	 
-	 <?php break;
-	      case 3:?>
-	 	     <input type="hidden" name="mrc_hidden" value="2">  
-	        <?php    echo "<h4>" . __( 'Page 4/4: Finshed' , 'my-record-collection') . "</h4>"; ?>  
-			
-		 <?php
-			$directory = MRC_URL_BASE_DIR."/my-record-collection/img/";
-
-			$filecount = countFiles($directory);
-			$db_img_count = mrc_num_db_imgs();
-			if($filecount == $db_img_count){
-				_e( "<p>Congratulations, My Record Collections is now fully installed. Here's how you do to disply it.</p><ol><li>Create a new WordPress Page, name it whatever you like</li><li>Include the following code <b>in HTML mode</b> <span style=\"background-color: #ddd;\">&lt;!--MyRecordCollection--&gt;</span></li><li>You're Done!</li></ol>", 'my-record-collection');
-			}else{
-				echo '<p id="mrc_imgimport">';
-				printf(__('Importing image <span class="fc">%1d</span> of <span class="tc">%2d</span></p>', 'my-record-collection'), $filecount, $db_img_count);
-				echo '<input type="button" name="mrc_imp_img" id="mrc_imp_img" value="'.__('Import Images', 'my-record-collection').'" class="button-primary">';
-				echo import_images_lis();
-			}
-			
-		 ?>
-			<p class="submit" style="display: none;"> 
-				<input type="submit" name="submit_prev" value="<?php _e('&laquo; Previous page' , 'my-record-collection') ?>" /> 
-				<input type="submit" name="submit" class="button-primary" value="<?php _e('Update Options' , 'my-record-collection') ?>" /> 
-				<input type="submit" name="submit_next"<?=$d_next?> value="<?php _e('Next page &raquo;' , 'my-record-collection') ?>" />
-			</p>
-
-	 
-	 <?php break;
-	 }
-*/
-?> 
