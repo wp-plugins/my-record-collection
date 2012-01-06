@@ -124,8 +124,24 @@ function mrc_destroy() {
 }
 
 function get_file_from_url($src){
-	// returns file content
-	return file_get_contents($src);
+	
+	$curl = function_exists('curl_version') ? true : false ;
+	$fgc =  file_get_contents(__FILE__) ? true : false;
+	
+	if($curl){
+		// Download file
+		  $curl = curl_init($src);
+		  curl_setopt($curl, CURLOPT_HEADER, 0);  // ignore any headers
+		  ob_start();  // use output buffering so the contents don't get sent directly to the browser
+		  curl_exec($curl);  // get the file
+		  curl_close($curl);
+		  $file = ob_get_contents();  // save the contents of the file into $file
+		  ob_end_clean();  // turn output buffering back off
+		return $file;		
+	}else if($fgc){
+		// returns file content
+		return file_get_contents($src);	
+	}
 }
 
 function parse_boolean($obj) {

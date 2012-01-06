@@ -79,6 +79,7 @@ jQuery(document).ready(function($) {
 				$.post('/wp-content/plugins/my-record-collection/mrc_import_admin.php',
 					values,function(){
 						alert(mrc_loc.saveMsg);
+						$('.mrca_wrapper').eq(3).show();
 				});
 			}
 		}
