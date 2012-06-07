@@ -90,7 +90,10 @@ function mrc_display($text) {
 				break;
 			case 'format':
 				$order = "f_name ".$settings['sortway'].", artist, r_date";
-				break;	
+				break;
+			default:
+				$order = "artist ".$settings['sortway'].", r_date";
+				break;
 		};
 	
 		$record_rows = $wpdb->get_results("SELECT * FROM  `".$wpdb->prefix."mrc_records` ORDER BY $order");

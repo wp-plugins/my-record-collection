@@ -20,10 +20,10 @@ function mrc_add2db(){ //ADDS THE XML TO THE DB
 	global $wpdb;
 	$wpdb->hide_errors();
 
-	
+	$uname = get_option('mrc_username');
 	$table_name = $wpdb->prefix . "mrc_records";
 	mrc_db_truncate();
-	$url = "http://api.discogs.com/users/volmar/collection/folders/0/releases?per_page=100&page=1";
+	$url = "http://api.discogs.com/users/".$uname."/collection/folders/0/releases?per_page=100&page=1";
 	$json = json_decode(get_file_from_url($url));
 	$page = $json->pagination->page;
 	$pages = $json->pagination->pages;
@@ -31,7 +31,7 @@ function mrc_add2db(){ //ADDS THE XML TO THE DB
 	
 	for($i=1; $i < $pages+1; $i++ ){
 		if($i != 1){
-			$url = "http://api.discogs.com/users/volmar/collection/folders/0/releases?per_page=100&page=".$i;
+			$url = "http://api.discogs.com/users/".$uname."/collection/folders/0/releases?per_page=100&page=".$i;
 			$json = json_decode(get_file_from_url($url));
 		}
 		foreach($json->releases as $r){
@@ -124,7 +124,6 @@ function mrc_destroy() {
 }
 
 function get_file_from_url($src){
-	
 	$curl = function_exists('curl_version') ? true : false ;
 	$fgc =  file_get_contents(__FILE__) ? true : false;
 	
@@ -143,6 +142,7 @@ function get_file_from_url($src){
 		return file_get_contents($src);	
 	}
 }
+
 
 function parse_boolean($obj) {
     return filter_var($obj, FILTER_VALIDATE_BOOLEAN);
