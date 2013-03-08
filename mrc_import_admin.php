@@ -296,6 +296,9 @@ $colormode = (isset($settings['colormode']) ? $settings['colormode'] : 'dark');
 ?>
 		
 <div class="wrap mrcAdmin"> 
+	<?php
+		highlight_string(print_r(unserialize(get_option('mrc_default_options')),1));
+	?>
 	<h2><?php _e( 'My Record Collection Options' , 'my-record-collection')?></h2>
 	<div class="mrca_wrapper visible"> 
 		<h4><?php _e( '1. Enter Username' , 'my-record-collection')?></h4>
