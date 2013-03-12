@@ -17,6 +17,7 @@ $mrc = new MyRecordCollection();
 add_action('admin_menu', array( $mrc, 'mrc_admin_actions') ); 	
 register_activation_hook(__FILE__, array( $mrc, 'createDatabase') );
 add_action('init', array( $mrc, 'mrc_init' ) );
+add_filter('the_posts', array( $mrc, 'conditionally_add_scripts_and_styles' ) ); 
 add_filter('the_content', array( $mrc, 'display_collection' ), 2);
 
 ?>

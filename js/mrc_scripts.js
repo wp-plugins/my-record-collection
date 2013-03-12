@@ -59,15 +59,17 @@ jQuery(function($){
 	$('#save_settings').bind('click',
 		function(){
 			var SettingsContainer = $('#mrc_displaysettings'),
-				type 	= SettingsContainer.find('.ui-tabs-active a').attr('href').slice(1),
-				enabled = SettingsContainer.find('ul.enabled').find('li').not('.header'),
-				disabled= SettingsContainer.find('ul.disabled').find('li').not('.header'),
-				sort 	= SettingsContainer.find('input[name=sort]:checked').val(),
-				way  	= SettingsContainer.find('input[name=sortway]:checked').val(),
-				num  	= SettingsContainer.find('#removenum').prop('checked'),
-				the  	= SettingsContainer.find('#removethe').prop('checked'),
-				dupes	= SettingsContainer.find('#dupes').prop('checked'),
-				fields 	= {enable:[],disable:[]};
+				type 		= SettingsContainer.find('.ui-tabs-active a').attr('href').slice(1),
+				enabled 	= SettingsContainer.find('ul.enabled').find('li').not('.header'),
+				disabled	= SettingsContainer.find('ul.disabled').find('li').not('.header'),
+				sort 		= SettingsContainer.find('input[name=sort]:checked').val(),
+				way  		= SettingsContainer.find('input[name=sortway]:checked').val(),
+				num  		= SettingsContainer.find('#removenum').prop('checked'),
+				the  		= SettingsContainer.find('#removethe').prop('checked'),
+				dupes		= SettingsContainer.find('#dupes').prop('checked'),
+				gridtype	= SettingsContainer.find('input[name=gridtype]:checked').val(),
+				liststring	= SettingsContainer.find('#liststring').val(),
+				fields 		= {enable:[],disable:[]};
 
 			enabled.each(function(){
 				fields.enable.push( $(this).data('name') );
@@ -78,14 +80,16 @@ jQuery(function($){
 			});
 
 			$.post(ajaxurl,{
-				fnc: 	'savesettings',
-				type: 	type,
-				fields: fields,
-				sort: 	sort,
-				way: 	way,
-				num: 	num,
-				the: 	the,
-				dupes: 	dupes
+				fnc: 		'savesettings',
+				type: 		type,
+				fields: 	fields,
+				sort: 		sort,
+				way: 		way,
+				num: 		num,
+				the: 		the,
+				dupes: 		dupes,
+				gridtype: 	gridtype,
+				liststring: liststring
 			},function(data){
 				alert('sparat');
 				/*alert(mrc_loc.saveMsg);*/

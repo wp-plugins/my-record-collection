@@ -57,9 +57,11 @@ switch($fnc){
 		$settings['fields'] = $s;
 		$settings['sort'] = $sort;
 		$settings['order'] = $way;
-		$settings['removenum'] = $num;
-		$settings['removethe'] = $the;
-		$settings['dupes'] = $dupes;
+		$settings['gridtype'] = $gridtype;
+		$settings['removenum'] = $mrc->parse_boolean($num);
+		$settings['removethe'] = $mrc->parse_boolean($the);
+		$settings['dupes'] = $mrc->parse_boolean($dupes);
+		$settings['liststring'] = $liststring;
 
 		update_option('mrc_settings', serialize($settings));
 
@@ -144,35 +146,41 @@ switch($fnc){
 				</ul>
 			</div>
 			<div id="grid">
-				gird
+				<h4><?php _e('Choose grid-mode' , 'my-record-collection') ?></h4>
+				<p><?php _e('The grid-mode comes in two flavours. The simple one and the "overlays"-mode, where i use the beautiful PNG overlays created by <a href="http://www.komodomedia.com/blog/2009/03/sexy-music-album-overlays/">Komodo media</a>. Choose the one you like best.' , 'my-record-collection') ?></p>
+				<img src="<?php echo plugins_url('gfx/grid_simple.png',__FILE__); ?>" alt=""><br>
+				<label><input type="radio" <?php if($settings['gridtype'] == 'simple') echo "checked "; ?>value="simple" name="gridtype"> <?php _e('Recordcovers mode' , 'my-record-collection') ?></label><br>
+				<img src="<?php echo plugins_url('gfx/grid_w_overlays.png',__FILE__); ?>" alt=""><br>
+				<label><input type="radio" <?php if($settings['gridtype'] == 'w_covers') echo "checked "; ?>value="w_covers" name="gridtype"> <?php _e('Recordcovers with overlays mode' , 'my-record-collection') ?></label><br>
 			</div>
 			<div id="list">
-				list
+				<p><?php _e('This mode will display your collection in a HTML-list (unordered list, UL). To choose wich fields you want to include, compose the string for each row. Just replace the field with the right code from the list below:' , 'my-record-collection') ?></p>
+				<ul>
+					<li><b>[artist]</b> - <?php _e('the artist name','my-record-collection'); ?></li>
+					<li><b>[title]</b> - <?php _e('the release title','my-record-collection'); ?></li>
+					<li><b>[format]</b> - <?php _e('the release format','my-record-collection'); ?></li>
+					<li><b>[label]</b> - <?php _e('record label','my-record-collection'); ?></li>
+					<li><b>[catno]</b> - <?php _e('the cataloge number','my-record-collection'); ?></li>
+					<li><b>[year]</b> - <?php _e('release year','my-record-collection'); ?></li>
+				</ul>
+				<textarea id="liststring" name="liststring" style="width: 400px"><?php echo $settings['liststring']?></textarea>
 			</div>
 		</div>
-		
-		
-		
-		<?/*p>
-			
-			<label><input type="radio" <?php if($settings['display'] == 'list') echo "checked "; ?>value="list" name="display"> <?php _e('List mode' , 'my-record-collection') ?><br></label>
-			<label><input type="radio" <?php if($settings['display'] == 'covers') echo "checked "; ?>value="covers" name="display"> <?php _e('Recordcovers mode' , 'my-record-collection') ?><br></label>
-			<label><input type="radio" <?php if($settings['display'] == 'covers_wo') echo "checked "; ?>value="covers_wo" name="display"> <?php _e('Recordcovers with overlays mode' , 'my-record-collection') ?></label>
-		</p>*/?>
+
 		<p>
 			<strong><?php _e('Select sort order' , 'my-record-collection') ?></strong>: <br>
-			<label><input type="radio" <?php if($settings['sort'] == 'artist') echo "checked "; ?>value="alphaartist" name="sort"> <?php _e('Alphabetical (artist)' , 'my-record-collection') ?><br>
-			<label><input type="radio" <?php if($settings['sort'] == 'title') echo "checked "; ?>value="alphatitle" name="sort"> <?php _e('Alphabetical (title)' , 'my-record-collection') ?></label><br>
+			<label><input type="radio" <?php if($settings['sort'] == 'artist') echo "checked "; ?>value="artist" name="sort"> <?php _e('Alphabetical (artist)' , 'my-record-collection') ?><br>
+			<label><input type="radio" <?php if($settings['sort'] == 'title') echo "checked "; ?>value="title" name="sort"> <?php _e('Alphabetical (title)' , 'my-record-collection') ?></label><br>
 			<label><input type="radio" <?php if($settings['sort'] == 'year') echo "checked "; ?>value="year" name="sort"> <?php _e('Year' , 'my-record-collection') ?></label><br>
-			<label><input type="radio" <?php if($settings['sort'] == 'format') echo "checked "; ?>value="format" name="sort"> <?php _e('Format' , 'my-record-collection') ?></label><br><br>
+			<label><input type="radio" <?php if($settings['sort'] == 'label') echo "checked "; ?>value="label" name="sort"> <?php _e('Record label' , 'my-record-collection') ?></label><br><br>
 			<label><input type="radio" <?php if($settings['order'] == 'asc') echo "checked "; ?>value="asc" name="sortway"> <?php _e('Ascending' , 'my-record-collection') ?></label> 
 			<label><input type="radio" <?php if($settings['order'] == 'desc') echo "checked "; ?>value="desc" name="sortway"> <?php _e('Descending' , 'my-record-collection') ?></label>
 		</p>
 		<p>
 			<strong><?php _e('Extra settings' , 'my-record-collection') ?></strong>: <br>
-			<label><input type="checkbox" value="removenum" id="removenum" <?php if($settings['removenum'] == 'true') echo "checked "; ?>> <?php _e('Remove extra numbers in artist names, (eg. change "Creative (2)" to "Creative"' , 'my-record-collection') ?></label><br>
-			<label><input type="checkbox" value="removethe" id="removethe" <?php if($settings['removethe'] == 'true') echo "checked "; ?>> <?php _e('Remove ", The" in artist names, (eg. change "Beatles, The" to "Beatles"' , 'my-record-collection') ?></label><br>
-			<label><input type="checkbox" value="dupes" id="dupes" <?php if($settings['dupes'] == 'true') echo "checked "; ?>> <?php _e('Show duplicates in the collection (if you have multiple copies of the same release)' , 'my-record-collection') ?></label>
+			<label><input type="checkbox" value="removenum" id="removenum" <?php if($settings['removenum']) echo "checked "; ?>> <?php _e('Remove extra numbers in artist names, (eg. change "Creative (2)" to "Creative"' , 'my-record-collection') ?></label><br>
+			<label><input type="checkbox" value="removethe" id="removethe" <?php if($settings['removethe']) echo "checked "; ?>> <?php _e('Remove ", The" in artist names, (eg. change "Beatles, The" to "Beatles"' , 'my-record-collection') ?></label><br>
+			<label><input type="checkbox" value="dupes" id="dupes" <?php if($settings['dupes']) echo "checked "; ?>> <?php _e('Show duplicates in the collection (if you have multiple copies of the same release)' , 'my-record-collection') ?></label>
 		</p>
 		<?/*p>
 			<strong><?php _e('Color mode' , 'my-record-collection') ?></strong>: <br>

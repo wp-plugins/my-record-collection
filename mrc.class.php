@@ -13,6 +13,7 @@ Class MyRecordCollection {
 	public $table_name;
 	public $settings;
 	public $fieldnames;
+	public $plugin_dir;
 
 	// Constructur sets up
 	public function __construct() {
@@ -28,6 +29,7 @@ Class MyRecordCollection {
 			'format' => 'Format',
 			'r_date' => 'Release date'
 		);
+		$this->plugin_dir = basename(dirname(__FILE__));
     }
 
 	// Creates the initial table when plugin is ativated
@@ -73,7 +75,9 @@ Class MyRecordCollection {
 					'link'		=>	'external',
 					'dupes'		=>	false,
 					'removenum' =>	true,
-					'removethe'	=>	false
+					'removethe'	=>	false,
+					'gridtype'	=> 'w_covers',
+					'liststring'=> '[artist] - [title] ([format],[r_date])'
 				)
 			)
 		);
@@ -103,6 +107,31 @@ Class MyRecordCollection {
 		$page = add_menu_page( "My Record Collection Settings", "My Record Collection", "manage_options", "my-record-collection", array( $this, 'mrc_admin') );
 		add_action('admin_print_scripts-' . $page, array( $this, 'mrc_js' ), 9);	
 		add_action('admin_print_styles-' . $page, array( $this, 'mrc_css' ), 9);
+	}
+
+	public function conditionally_add_scripts_and_styles($posts){
+		if (empty($posts)) return $posts;
+ 
+		$shortcode_found = false; // use this flag to see if styles and scripts need to be enqueued
+		foreach ($posts as $post) {
+			if (preg_match("|<!--MyRecordCollection-->|", $post->post_content)) {
+			//if (stripos($post->post_content, '<!--MyRecordCollection-->')) {
+				$shortcode_found = true; // bingo!
+				break;
+			}
+		}
+	 
+		if ($shortcode_found) {
+			// enqueue here
+			// wp_enqueue_script('jquery');
+			// wp_enqueue_script('mrcScript', WP_PLUGIN_URL . '/my-record-collection/js/mrc_scripts.js');
+			// wp_enqueue_script('fancybox', WP_PLUGIN_URL . '/my-record-collection/js/plugins/fancybox/jquery.fancybox.pack.js');
+			//wp_localize_script( 'mrcScript', 'mrc_loc', mrc_localize_vars());
+			wp_enqueue_style('mrcStyle', WP_PLUGIN_URL . '/my-record-collection/css/mrc_style.css');
+			//wp_enqueue_style('fancybox', WP_PLUGIN_URL . '/my-record-collection/js/plugins/fancybox/jquery.fancybox.css');
+		}
+	 
+		return $posts;
 	}
 
 	// Inits the plugin sets up
@@ -139,6 +168,10 @@ Class MyRecordCollection {
 	public function db_truncate(){
 		global $wpdb;
 		$wpdb->query('TRUNCATE TABLE '.$this->table_name); 
+	}
+
+	public function parse_boolean($obj) {
+		return filter_var($obj, FILTER_VALIDATE_BOOLEAN);
 	}
 
 	//FUNCTIONS
@@ -184,8 +217,10 @@ Class MyRecordCollection {
 		$s = $this->settings;
 		switch($type){
 			case 'artist':
-				$artist = $s['removenum'] == 'true' ? trim(preg_replace("/\([\d]{1,2}\)/", "", $r)) : trim($r);
-				return $s['removethe'] == 'true' ? trim(preg_replace("/,\sThe/", "", $artist)) : trim($artist);
+				$artist = $s['removenum'] ? trim(preg_replace("/\([\d]{1,2}\)/", "", $r)) : trim($r);
+				return $s['removethe'] ? trim(preg_replace("/,\sThe/", "", $artist)) : trim($artist);
+			case 'title':
+				return '<a href="http://www.discogs.com/release/'.$r->did.'" target="_blank">'.$r->title.'</a>';
 			case 'format':
 				if($r->f_qty > 1){
 					$qt = $r->f_qty."x";
@@ -208,11 +243,16 @@ Class MyRecordCollection {
 					$fc = "other";
 					$f = $qt.$r->f_name;
 				}else{
-					$f = "&Ouml;vrigt";
+					$f = "Other";
 					$fc = "other";
 				}
 				return array($f,$fc);
-		}
+			case 'grid':
+				$format = $this->format_data('format',$r);
+				$artist = $this->format_data('artist',$r->artist);
+				$imgurl = '<img src="' .str_replace("http://api.discogs.com/image/","http://s.pixogs.com/image/",$r->thumb).'">';
+				return "<li data-record=\"".$r->did."\" class=\"".$format[1]."\"><a target=\"_blank\" href=\"http://www.discogs.com/release/$r->did\"><span class=\"mrc_artist\">$artist</span> <span class=\"mrc_dash\">-</span> <span class=\"mrc_title\">$r->title</span><span class=\"mrc_comma\">,</span> <span class=\"mrc_format\">".$format[0]."</span><span class=\"mrc_comma\">,</span> <span class=\"mrc_label\">$r->label</span></a>$imgurl</li>";
+		}	
 	}
 
 	// Displays collection
@@ -221,6 +261,10 @@ Class MyRecordCollection {
 		$settings = $this->settings;
 
 		$sql = "SELECT * FROM ".$this->table_name;
+
+		if( ! $settings['dupes'] ){
+			$sql .= " GROUP BY did";
+		}
 
 		switch($settings['sort']){
 			case 'year':
@@ -232,15 +276,19 @@ Class MyRecordCollection {
 			case 'title':
 				$sql .= ' ORDER BY title, artist';
 				break;
+			case 'label':
+				$sql .= ' ORDER BY label, artist';
+				break;
 			default:
 				$sql .= ' ORDER BY artist, r_date';
 				break;
 		}
 
 		$sql .= $settings['order'] == 'asc' ? ' ASC' : ' DESC';
+		//$sql .= " LIMIT 4";
 		$record_rows = $wpdb->get_results($sql);
 
-		$return = "";
+		$return = '<div id="MyRecordCollection">';
 		$enabled_fields = array();
 
 		if($settings['type'] == 'table'){
@@ -261,6 +309,8 @@ Class MyRecordCollection {
 					}else if($f == 'format'){
 						$format = $this->format_data('format',$r);
 						$return .= '<td>'.$format[0].'</td>';
+					}else if($f == 'title'){
+						$return .= '<td>'.$this->format_data('title',$r).'</td>';
 					}else if($f == 'r_date'){
 						$year = $r->{$f} == 0 ? '-' : $r->{$f};
 						$return .= '<td>'.$year.'</td>';
@@ -272,7 +322,30 @@ Class MyRecordCollection {
 				$return .= '</tr>';
 			}		
 			$return .= '</table>';
+		}else if($settings['type'] == 'grid'){
+			$return = '<ul class="'.($settings['gridtype'] == 'w_covers' ? 'music' : 'simplemusic').'">';
+
+			foreach ($record_rows as $rec) {
+
+				$return .= $this->format_data('grid',$rec);
+			}
+			$return .= '</ul>';
+		}else if($settings['type'] == 'list'){
+
+			$return .= '<ul class="list">';
+
+			$search = array('[did]','[artist]','[title]','[label]','[catno]','[format]','[year]');
+
+			foreach ($record_rows as $r) {
+				$format = $this->format_data('format',$r);
+				$replace = array($r->did,$this->format_data('artist',$r->artist),$this->format_data('title',$r),$r->label,$r->catno,$format[0],$r->r_date);
+				$return .= str_replace($search, $replace, $settings['liststring'])."<br>";
+			}
+
+			$return .= '</ul>';
 		}
+		$return .= '</div>';
+
 
 		return $return;
 	}
