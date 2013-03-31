@@ -77,7 +77,9 @@ Class MyRecordCollection {
 					'removenum' =>	true,
 					'removethe'	=>	false,
 					'gridtype'	=> 'w_covers',
-					'liststring'=> '[artist] - [title] ([format],[r_date])'
+					'liststring'=> '[artist] - [title] ([format],[r_date])',
+					'add_styles'=> true,
+					'theme'		=> 'darkonlight'
 				)
 			)
 		);
@@ -97,8 +99,7 @@ Class MyRecordCollection {
 
 	// ADD STYLES TO ADMIN PAGE
 	public function mrc_css(){
-		//
-		wp_enqueue_style('mrcStyles', WP_PLUGIN_URL . '/my-record-collection/css/mrc_style.css');
+		//wp_enqueue_style('mrcStyles', WP_PLUGIN_URL . '/my-record-collection/css/mrc_style.css');
 		wp_enqueue_style('jquery-ui','http://code.jquery.com/ui/1.10.1/themes/base/jquery-ui.css');
 	}
 
@@ -124,10 +125,11 @@ Class MyRecordCollection {
 		if ($shortcode_found) {
 			// enqueue here
 			// wp_enqueue_script('jquery');
-			// wp_enqueue_script('mrcScript', WP_PLUGIN_URL . '/my-record-collection/js/mrc_scripts.js');
+			wp_enqueue_script('mrcScript', WP_PLUGIN_URL . '/my-record-collection/js/mrc_scripts.js', array('jquery','jquery-ui-core','jquery-ui-tooltip'));
 			// wp_enqueue_script('fancybox', WP_PLUGIN_URL . '/my-record-collection/js/plugins/fancybox/jquery.fancybox.pack.js');
 			//wp_localize_script( 'mrcScript', 'mrc_loc', mrc_localize_vars());
 			wp_enqueue_style('mrcStyle', WP_PLUGIN_URL . '/my-record-collection/css/mrc_style.css');
+			//wp_enqueue_style('jquery-ui','http://code.jquery.com/ui/1.10.1/themes/base/jquery-ui.css');
 			//wp_enqueue_style('fancybox', WP_PLUGIN_URL . '/my-record-collection/js/plugins/fancybox/jquery.fancybox.css');
 		}
 	 
@@ -175,38 +177,44 @@ Class MyRecordCollection {
 	}
 
 	//FUNCTIONS
-	public function add2db(){ //ADDS THE XML TO THE DB
+	public function add2db($start = 0){
 		global $wpdb;
 		$wpdb->hide_errors();
 
 		$uname = $this->settings['discogs_info']['username'];
-		$this->db_truncate();
-		$url = "http://api.discogs.com/users/".$uname."/collection/folders/0/releases?per_page=100&page=1";
+		//$this->db_truncate();
+		$url = "http://api.discogs.com/users/".$uname."/collection/folders/0/releases?per_page=100&sort=added&page=1";
 		$json = json_decode($this->get_file_from_url($url));
+		$items = $json->pagination->items;
 		$page = $json->pagination->page;
 		$pages = $json->pagination->pages;
 		$count = 0;
+
+		$i = $start != 0 ? floor($start/100)+1 : 1;
+		$count = floor($start/100) * 100;
 		
-		for($i=1; $i < $pages+1; $i++ ){
+		for($i=$i; $i < $pages+1; $i++ ){
 			if($i != 1){
-				$url = "http://api.discogs.com/users/".$uname."/collection/folders/0/releases?per_page=100&page=".$i;
+				$url = "http://api.discogs.com/users/".$uname."/collection/folders/0/releases?per_page=100&sort=added&page=".$i;
 				$json = json_decode($this->get_file_from_url($url));
 			}
 			foreach($json->releases as $r){
-				$data = array(
-				   'mrc_id' => null,
-				   'did' 	=> $r->id, 
-				   'artist' => html_entity_decode($r->basic_information->artists[0]->name), 
-				   'title'	=> html_entity_decode($r->basic_information->title), 
-				   'label' 	=> html_entity_decode($r->basic_information->labels[0]->name), 
-				   'catno' 	=> $r->basic_information->labels[0]->catno, 
-				   'f_name' => $r->basic_information->formats[0]->name, 
-				   'f_qty' 	=> $r->basic_information->formats[0]->qty, 
-				   'f_desc' => (isset($r->basic_information->formats[0]->descriptions[0]) ? $r->basic_information->formats[0]->descriptions[0] : null), 
-				   'r_date' => $r->basic_information->year,
-				   'thumb'	=> $r->basic_information->thumb
-				 );
-				$wpdb->insert( $this->table_name, $data );
+				if($start <= $count){
+					$data = array(
+					   'mrc_id' => null,
+					   'did' 	=> $r->id, 
+					   'artist' => html_entity_decode($r->basic_information->artists[0]->name), 
+					   'title'	=> html_entity_decode($r->basic_information->title), 
+					   'label' 	=> html_entity_decode($r->basic_information->labels[0]->name), 
+					   'catno' 	=> $r->basic_information->labels[0]->catno, 
+					   'f_name' => $r->basic_information->formats[0]->name, 
+					   'f_qty' 	=> $r->basic_information->formats[0]->qty, 
+					   'f_desc' => (isset($r->basic_information->formats[0]->descriptions[0]) ? $r->basic_information->formats[0]->descriptions[0] : null), 
+					   'r_date' => $r->basic_information->year,
+					   'thumb'	=> $r->basic_information->thumb
+					 );
+					$wpdb->insert( $this->table_name, $data );
+				}
 				$count++;
 			}
 		}
@@ -237,21 +245,21 @@ Class MyRecordCollection {
 					$fc = "vinyl";
 					$f = $qt.$r->f_desc;
 				}else if($r->f_name == "Cassette"){
-					$fc = "other";
+					$fc = "vinyl";
 					$f = $qt.$r->f_name;
 				}else if($r->f_name == "Box Set"){
-					$fc = "other";
+					$fc = "vinyl";
 					$f = $qt.$r->f_name;
 				}else{
 					$f = "Other";
-					$fc = "other";
+					$fc = "vinyl";
 				}
 				return array($f,$fc);
 			case 'grid':
 				$format = $this->format_data('format',$r);
 				$artist = $this->format_data('artist',$r->artist);
 				$imgurl = '<img src="' .str_replace("http://api.discogs.com/image/","http://s.pixogs.com/image/",$r->thumb).'">';
-				return "<li data-record=\"".$r->did."\" class=\"".$format[1]."\"><a target=\"_blank\" href=\"http://www.discogs.com/release/$r->did\"><span class=\"mrc_artist\">$artist</span> <span class=\"mrc_dash\">-</span> <span class=\"mrc_title\">$r->title</span><span class=\"mrc_comma\">,</span> <span class=\"mrc_format\">".$format[0]."</span><span class=\"mrc_comma\">,</span> <span class=\"mrc_label\">$r->label</span></a>$imgurl</li>";
+				return "<li data-record=\"".$r->did."\" class=\"".$format[1]."\"><a title=\"$artist - $r->title $format[0]\" target=\"_blank\" href=\"http://www.discogs.com/release/$r->did\"><span class=\"mrc_artist\">$artist</span> <span class=\"mrc_dash\">-</span> <span class=\"mrc_title\">$r->title</span><span class=\"mrc_comma\">,</span> <span class=\"mrc_format\">".$format[0]."</span><span class=\"mrc_comma\">,</span> <span class=\"mrc_label\">$r->label</span></a>$imgurl</li>";
 		}	
 	}
 
@@ -288,7 +296,7 @@ Class MyRecordCollection {
 		//$sql .= " LIMIT 4";
 		$record_rows = $wpdb->get_results($sql);
 
-		$return = '<div id="MyRecordCollection">';
+		$return = '<div id="MyRecordCollection"'.($settings['theme'] == 'lightondark' ? ' class="lightondark"' : '' ).'>';
 		$enabled_fields = array();
 
 		if($settings['type'] == 'table'){
@@ -323,7 +331,7 @@ Class MyRecordCollection {
 			}		
 			$return .= '</table>';
 		}else if($settings['type'] == 'grid'){
-			$return = '<ul class="'.($settings['gridtype'] == 'w_covers' ? 'music' : 'simplemusic').'">';
+			$return .= '<ul class="'.($settings['gridtype'] == 'w_covers' ? 'music' : 'simplemusic').'">';
 
 			foreach ($record_rows as $rec) {
 

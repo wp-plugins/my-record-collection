@@ -1,17 +1,60 @@
-/*** ADMIN STYLES ***/
-
-.mrca_wrapper { display: none; border: 1px solid silver; background: #eee; padding: 5px 10px; -webkit-border-radius: 7px; -moz-border-radius: 7px; border-radius: 7px; margin-top: 5px; } 
-
-.mrca_wrapper.visible {display:block; } 
-
-.hidden {display: none; } 
-
-#loader_overlay {position: fixed; top: 0px; left: 0px; width: 100%; height: 100%; background: rgba(255,255,255,0.7) url(../gfx/loader.gif) 50% 50% no-repeat; z-index: 300; }
-
-
 /*** FRONTEND ***/
 
+#MyRecordCollection:before,
+#MyRecordCollection:after {
+    content: " "; /* 1 */
+    display: table; /* 2 */
+}
+
+#MyRecordCollection:after {
+    clear: both;
+}
+
+/**
+ * For IE 6/7 only
+ * Include this rule to trigger hasLayout and contain floats.
+ */
+#MyRecordCollection {
+    *zoom: 1;
+}
+
+
+
+
+/* Table view */
+#MyRecordCollection td {
+	padding: 3px;
+}
+#MyRecordCollection tr:nth-child(odd) td {
+	background: rgba(0,0,0,0.1);
+}
+
+#MyRecordCollection tr:nth-child(even) td {
+	background: rgba(255,255,255,0.1);
+}
+
+#MyRecordCollection th {
+	background: rgba(0,0,0,0.3);
+}
+
+#MyRecordCollection {
+	color: #000;
+}
+
+
+#MyRecordCollection.lightondark {
+	color: #fff;
+}
+
+#MyRecordCollection.lightondark th {
+	background: rgba(255,255,255,0.3);
+}
+
 /** covers_wo (Default) **/
+
+#MyRecordCollection ul {
+	padding: 0px;
+}
 
 ul.music,
 ul.music li,
@@ -27,16 +70,10 @@ ul.music li.jewel a{ background:url(../gfx/jewel.png) 0 0 no-repeat; width:96px;
 ul.music li.jewel{ background:url(../gfx/blank_insert.gif) 12px 3px no-repeat; }
 
 /* Vinyl Sleeve */
-ul.music li.vinyl img{ width:72px; height:72px; left:2px; top:1px; } 
-ul.music li.vinyl a{ background:url(../gfx/vinyl.png) 0 0 no-repeat; width:96px; /*height:76px;*/ height: 82px; } 
-ul.music li.vinyl{ background:url(../gfx/vinyl_insert.gif) 2px 1px no-repeat; }
+ul.music li.vinyl img { width:72px; height:72px; left:2px; top:1px; } 
+ul.music li.vinyl a { background:url(../gfx/vinyl.png) 0 0 no-repeat; width:96px; /*height:76px;*/ height: 82px; } 
+ul.music li.vinyl { background:url(../gfx/vinyl_insert.gif) 2px 1px no-repeat; }
 
-/* Compact Disc */
-ul.music li.cd img, 
-ul.music li.cd a{ width:82px; height:82px; top:0; left:0; } 
-ul.music li.cd a{ background:url(../gfx/cd-ddd.png) 0 0 no-repeat; height:86px; } 
-ul.music li.cd{ background:url(../gfx/blank_cd.jpg) 0 0 no-repeat; } 
-ul.music li:hover { z-index: 10; }
 
 /** covers **/
 
@@ -56,23 +93,20 @@ ul.simplemusic a span.mrc_label { display: inline;  color: #bbb; }
 ul.simple { list-style-type: none !important; }
 ul.simple li:nth-child(odd) { background-color: #eee; }
 
-/** MRC_info_tooltip **/
-#MRC_info_tooltip { display: none; width: 223px; height: 95px; background: url(../gfx/overlayBaW.png) top right no-repeat; position: absolute; padding: 5px; z-index: 7; }
-#MRC_info_tooltip.alternative { background-position: top left !important; }
-#MRC_info_tooltip .info {width: 45%; float: right; color: #fff; text-align: right; font-size: 11px; padding: 3px; word-wrap: break-word; }
-#MRC_info_tooltip.alternative .info { float: left; text-align: left; }
-#MRC_info_tooltip .info span { display: block; color: #666; }
-
-.mrc_d_foot{ clear: both; }
-
-/** Light mode **/
-#MyRecordCollection.light,
-#MyRecordCollection.light a { color: #fff; }
-#MyRecordCollection.light ul.simple li:nth-child(odd) { background-color: #333; }
-
-#MRC_info_tooltip.light { background-position: bottom right; color: #000; }
-#MRC_info_tooltip.light.alternative { background-position: bottom left !important; color: #000; }
-#MRC_info_tooltip.light .info { color: #000; }
+.ui-tooltip {
+	padding: 8px;
+	position: absolute;
+	z-index: 9999;
+	max-width: 300px;
+	-webkit-box-shadow: 0 0 5px #aaa;
+	box-shadow: 0 0 5px #aaa;
+	background: #fff;
+	font: 12px Helvetica, Arial, sans-serif;
+	color: #000;
+}
+body .ui-tooltip {
+	border-width: 2px;
+}
 
 
 /** DISPLAY INFO **/

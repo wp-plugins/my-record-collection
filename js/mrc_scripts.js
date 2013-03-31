@@ -13,111 +13,126 @@ jQuery(function($){
 	var adminarea = $('.mrcAdmin'),
 		ajaxurl = '/wp-content/plugins/my-record-collection/mrc_admin_page.php';
 
-	$( "#tabs" ).tabs();
-	$('.fields').sortable({
-		connectWith: '.fields',
-		items: 'li:not(.header)'
-	});
+	if(adminarea.length > 0){
+		$( "#tabs" ).tabs();
+		$('.fields').sortable({
+			connectWith: '.fields',
+			items: 'li:not(.header)'
+		});
 
-	$('#submit_username').bind('click',
-		function(){
-			loader(true,'Laddar användarinfo från discogs');
-			var un = $('#discogs_username').val();
-			if(un != ''){
-				$.post(ajaxurl,{fnc:'getuser',username:un},function(data){
-					var user = $.parseJSON(data);
-					$('#discogs_recordcount').text(user.num_collection);
-					$('.mrca_wrapper').eq(1).slideDown();
-					$('#reset_username').removeClass('hidden');
-					loader(false);
+		$('#submit_username').bind('click',
+			function(){
+				loader(true,'Laddar användarinfo från discogs');
+				var un = $('#discogs_username').val();
+				if(un != ''){
+					$.post(ajaxurl,{fnc:'getuser',username:un},function(data){
+						var user = $.parseJSON(data);
+						$('#discogs_recordcount').text(user.num_collection);
+						$('.mrca_wrapper').eq(1).slideDown();
+						$('#reset_username').removeClass('hidden');
+						loader(false);
+					});
+				}
+			}
+		);
+
+		$('#reset_username').bind('click',
+			function(){
+				$.post(ajaxurl,{fnc:'resetuser'},function(data){
+					window.location.href = window.location.href;
 				});
 			}
-		}
-	);
+		);
 
-	$('#reset_username').bind('click',
-		function(){
-			$.post(ajaxurl,{fnc:'resetuser'},function(data){
-				window.location.href = window.location.href;
-			});
-		}
-	);
-
-	$('#import_records').bind('click',
-		function(){
-			loader(true);
-			$.post(ajaxurl,{fnc:'add2db'},function(data){
-				loader(false);
-				$('#db_recordcount').text(data);
-				$('#import_records').remove();
-				$('#records_in_db').show();
-				$('.mrca_wrapper').eq(2).slideDown();
-			});
-		}
-	);
-
-	$('#save_settings').bind('click',
-		function(){
-			var SettingsContainer = $('#mrc_displaysettings'),
-				type 		= SettingsContainer.find('.ui-tabs-active a').attr('href').slice(1),
-				enabled 	= SettingsContainer.find('ul.enabled').find('li').not('.header'),
-				disabled	= SettingsContainer.find('ul.disabled').find('li').not('.header'),
-				sort 		= SettingsContainer.find('input[name=sort]:checked').val(),
-				way  		= SettingsContainer.find('input[name=sortway]:checked').val(),
-				num  		= SettingsContainer.find('#removenum').prop('checked'),
-				the  		= SettingsContainer.find('#removethe').prop('checked'),
-				dupes		= SettingsContainer.find('#dupes').prop('checked'),
-				gridtype	= SettingsContainer.find('input[name=gridtype]:checked').val(),
-				liststring	= SettingsContainer.find('#liststring').val(),
-				fields 		= {enable:[],disable:[]};
-
-			enabled.each(function(){
-				fields.enable.push( $(this).data('name') );
-			});
-
-			disabled.each(function(){
-				fields.disable.push( $(this).data('name') );
-			});
-
-			$.post(ajaxurl,{
-				fnc: 		'savesettings',
-				type: 		type,
-				fields: 	fields,
-				sort: 		sort,
-				way: 		way,
-				num: 		num,
-				the: 		the,
-				dupes: 		dupes,
-				gridtype: 	gridtype,
-				liststring: liststring
-			},function(data){
-				alert('sparat');
-				/*alert(mrc_loc.saveMsg);*/
-				$('.mrca_wrapper').eq(3).show();
-			});
-				/*sort = SettingsContainer.find('input[name=sort]:checked').val(),
-				way  = SettingsContainer.find('input[name=sortway]:checked').val(),
-				num  = SettingsContainer.find('#removenum').prop('checked'),
-				the  = SettingsContainer.find('#removethe').prop('checked'),
-				col  = SettingsContainer.find('input[name=colormode]:checked').val();*/
-			/*if(mode && sort && way){
-				var values = {
-					fnc 	: 'savesettings',
-					display : mode,
-					sort 	: sort,
-					sortway : way,
-					r_num	: num,
-					r_the	: the,
-					col	: col
-				};
-				$.post('/wp-content/plugins/my-record-collection/mrc_import_admin.php',
-					values,function(){
-						alert(mrc_loc.saveMsg);
-						$('.mrca_wrapper').eq(3).show();
+		$('#reset_records').bind('click',
+			function(){
+				loader(true);
+				$.post(ajaxurl,{fnc:'resetdatabase'},function(data){
+					loader(false);
+					window.location.href = window.location.href;
 				});
-			}*/
-		}
-	);
+			}
+		);
+
+		$('#update_records').bind('click',
+			function(){
+				var in_collection = parseInt($('#db_recordcount').text(),10);
+				loader(true);
+				$.post(ajaxurl,{fnc:'resetdatabase',start:in_collection},function(data){
+					loader(false);
+					window.location.href = window.location.href;
+				});
+			}
+		);
+
+		$('#import_records').bind('click',
+			function(){
+				loader(true);
+				$.post(ajaxurl,{fnc:'add2db'},function(data){
+					loader(false);
+					$('#db_recordcount').text(data);
+					$('#import_records').remove();
+					$('#records_in_db').show();
+					$('.mrca_wrapper').eq(2).slideDown();
+				});
+			}
+		);
+
+		$('#save_settings').bind('click',
+			function(){
+				var SettingsContainer = $('#mrc_displaysettings'),
+					type 		= SettingsContainer.find('.ui-tabs-active a').attr('href').slice(1),
+					enabled 	= SettingsContainer.find('ul.enabled').find('li').not('.header'),
+					disabled	= SettingsContainer.find('ul.disabled').find('li').not('.header'),
+					sort 		= SettingsContainer.find('input[name=sort]:checked').val(),
+					way  		= SettingsContainer.find('input[name=sortway]:checked').val(),
+					num  		= SettingsContainer.find('#removenum').prop('checked'),
+					the  		= SettingsContainer.find('#removethe').prop('checked'),
+					dupes		= SettingsContainer.find('#dupes').prop('checked'),
+					gridtype	= SettingsContainer.find('input[name=gridtype]:checked').val(),
+					liststring	= SettingsContainer.find('#liststring').val(),
+					add_styles	= SettingsContainer.find('#add_styles').prop('checked'),
+					theme		= SettingsContainer.find('input[name=theme]:checked').val(),
+					fields 		= {enable:[],disable:[]};
+
+				enabled.each(function(){
+					fields.enable.push( $(this).data('name') );
+				});
+
+				disabled.each(function(){
+					fields.disable.push( $(this).data('name') );
+				});
+
+				$.post(ajaxurl,{
+					fnc: 		'savesettings',
+					type: 		type,
+					fields: 	fields,
+					sort: 		sort,
+					way: 		way,
+					num: 		num,
+					the: 		the,
+					dupes: 		dupes,
+					gridtype: 	gridtype,
+					liststring: liststring,
+					add_styles: add_styles,
+					theme: 		theme 
+				},function(data){
+					alert('sparat');
+					/*alert(mrc_loc.saveMsg);*/
+					$('.mrca_wrapper').eq(3).show();
+				});
+			}
+		);
+	}else{
+		console.log($('ul.music').find('a'));
+		$('ul.music').find('a').tooltip({
+			position: {
+				at: 'left-50% top-50%'
+			}
+		});
+	}
+
+
 
 });
 
